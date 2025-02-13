@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <conio.h>
 #include "campominado.h"
 
 // Cria uma nova célula com valores padrões
@@ -85,3 +86,18 @@ void Liberar_Tabuleiro(Tabuleiro *tabuleiro) {
     }
     free(tabuleiro->grid);
 }
+
+void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas) {
+    int a, b;
+    for (int i = 0; i < num_bombas; i++) {
+        a = rand() % tabuleiro->largura;
+        b = rand() % tabuleiro->altura;
+
+        if (tabuleiro->grid[b][a].bomba == false) {
+            tabuleiro->grid[b][a].bomba = true;
+        } else {
+            i--;
+        }
+    }
+}
+
