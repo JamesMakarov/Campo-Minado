@@ -22,6 +22,8 @@ Celula* CriarNova(int x, int y);
 void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura);
 void Conectar_Vizinhos(Tabuleiro *tabuleiro);
 void Liberar_Tabuleiro(Tabuleiro *tabuleiro);
+void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas);
+void Bombas_Perto_Celula(Tabuleiro *tabuleiro, int bombas);
 
 
 #endif

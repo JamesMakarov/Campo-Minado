@@ -101,3 +101,21 @@ void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas) {
     }
 }
 
+void Bombas_Perto_Celula(Tabuleiro *tabuleiro, int bombas){
+    for (int i = 0; i < tabuleiro->largura; i++) {
+        for (int j = 0; j < tabuleiro->altura; j++){
+            int cont = 0;
+            (tabuleiro->grid[i][j].cima->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].baixo->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].esq->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dir->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dbdir->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dbesq->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dcdir->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dcesq->bomba == true) ? (cont++) : (cont=cont);
+            tabuleiro->grid[i][j].bombas = cont;
+            
+        }
+    }
+}
+
