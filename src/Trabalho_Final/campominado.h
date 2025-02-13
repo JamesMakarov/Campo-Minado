@@ -1,5 +1,6 @@
 #ifndef CAMPOMINADO_H
 #define CAMPOMINADO_H
+#include <stdbool.h>
 
 typedef struct Celula {
 
