@@ -24,6 +24,7 @@ void Conectar_Vizinhos(Tabuleiro *tabuleiro);
 void Liberar_Tabuleiro(Tabuleiro *tabuleiro);
 void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas);
 void Bombas_Perto_Celula(Tabuleiro *tabuleiro, int bombas);
+void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y);
 
 
 #endif

@@ -105,17 +105,46 @@ void Bombas_Perto_Celula(Tabuleiro *tabuleiro, int bombas){
     for (int i = 0; i < tabuleiro->largura; i++) {
         for (int j = 0; j < tabuleiro->altura; j++){
             int cont = 0;
-            (tabuleiro->grid[i][j].cima->bomba == true) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].baixo->bomba == true) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].esq->bomba == true) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dir->bomba == true) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dbdir->bomba == true) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dbesq->bomba == true) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dcdir->bomba == true) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dcesq->bomba == true) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].cima && tabuleiro->grid[i][j].cima->bomba) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].baixo && tabuleiro->grid[i][j].baixo->bomba) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].esq && tabuleiro->grid[i][j].esq->bomba) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dir && tabuleiro->grid[i][j].dir->bomba) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dbdir && tabuleiro->grid[i][j].dbdir->bomba) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dbesq && tabuleiro->grid[i][j].dbesq->bomba) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dcdir && tabuleiro->grid[i][j].dcdir->bomba) ? (cont++) : (cont=cont);
+            (tabuleiro->grid[i][j].dcesq && tabuleiro->grid[i][j].dcesq->bomba) ? (cont++) : (cont=cont);
             tabuleiro->grid[i][j].bombas = cont;
             
         }
+    }
+}
+
+void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
+    if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
+        return; 
+    }
+    
+    Celula *celula = &tabuleiro->grid[y][x];
+
+    if (celula->aberto) {
+        return;
+    }
+
+    celula->aberto = true;
+
+    if (celula->bomba) {
+        return;
+    }
+
+    if (celula->bombas == 0) {
+        Revelar_celulas(tabuleiro, x - 1, y - 1); 
+        Revelar_celulas(tabuleiro, x, y - 1);      
+        Revelar_celulas(tabuleiro, x + 1, y - 1);  
+        Revelar_celulas(tabuleiro, x - 1, y);     
+        Revelar_celulas(tabuleiro, x + 1, y);    
+        Revelar_celulas(tabuleiro, x - 1, y + 1);  
+        Revelar_celulas(tabuleiro, x, y + 1);      
+        Revelar_celulas(tabuleiro, x + 1, y + 1);  
     }
 }
 
