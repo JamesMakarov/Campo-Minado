@@ -105,14 +105,14 @@ void Bombas_Perto_Celula(Tabuleiro *tabuleiro){
     for (int i = 0; i < tabuleiro->altura; i++) {
         for (int j = 0; j < tabuleiro->largura; j++){
             int cont = 0;
-            (tabuleiro->grid[i][j].cima && tabuleiro->grid[i][j].cima->bomba) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].baixo && tabuleiro->grid[i][j].baixo->bomba) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].esq && tabuleiro->grid[i][j].esq->bomba) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dir && tabuleiro->grid[i][j].dir->bomba) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dbdir && tabuleiro->grid[i][j].dbdir->bomba) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dbesq && tabuleiro->grid[i][j].dbesq->bomba) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dcdir && tabuleiro->grid[i][j].dcdir->bomba) ? (cont++) : (cont=cont);
-            (tabuleiro->grid[i][j].dcesq && tabuleiro->grid[i][j].dcesq->bomba) ? (cont++) : (cont=cont);
+            if (tabuleiro->grid[i][j].cima && tabuleiro->grid[i][j].cima->bomba) cont++;
+            if (tabuleiro->grid[i][j].baixo && tabuleiro->grid[i][j].baixo->bomba) cont++;
+            if (tabuleiro->grid[i][j].esq && tabuleiro->grid[i][j].esq->bomba) cont++;
+            if (tabuleiro->grid[i][j].dir && tabuleiro->grid[i][j].dir->bomba) cont++;
+            if (tabuleiro->grid[i][j].dbdir && tabuleiro->grid[i][j].dbdir->bomba) cont++;
+            if (tabuleiro->grid[i][j].dbesq && tabuleiro->grid[i][j].dbesq->bomba) cont++;
+            if (tabuleiro->grid[i][j].dcdir && tabuleiro->grid[i][j].dcdir->bomba) cont++;
+            if (tabuleiro->grid[i][j].dcesq && tabuleiro->grid[i][j].dcesq->bomba) cont++;
             tabuleiro->grid[i][j].bombas = cont;
             
         }
@@ -128,14 +128,14 @@ int bandeiras_perto(Tabuleiro *tabuleiro , int x, int y){
 
     if (celula->aberto) {
         int cont = 0;
-        (celula->cima && (celula->cima->bandeira)) ? (cont++) : (cont=cont);
-        (celula->baixo && (celula->baixo->bandeira)) ? (cont++) : (cont=cont);
-        (celula->esq && (celula->esq->bandeira)) ? (cont++) : (cont=cont);
-        (celula->dir && (celula->dir->bandeira)) ? (cont++) : (cont=cont);
-        (celula->dbdir && (celula->dbdir->bandeira)) ? (cont++) : (cont=cont);
-        (celula->dbesq && (celula->dbesq->bandeira)) ? (cont++) : (cont=cont);
-        (celula->dcdir && (celula->dcdir->bandeira)) ? (cont++) : (cont=cont);
-        (celula->dcesq && (celula->dcesq->bandeira)) ? (cont++) : (cont=cont);
+        if (celula->cima && (celula->cima->bandeira)) cont++;
+        if (celula->baixo && (celula->baixo->bandeira)) cont++;
+        if (celula->esq && (celula->esq->bandeira)) cont++;
+        if (celula->dir && (celula->dir->bandeira)) cont++;
+        if (celula->dbdir && (celula->dbdir->bandeira)) cont++;
+        if (celula->dbesq && (celula->dbesq->bandeira)) cont++;
+        if (celula->dcdir && (celula->dcdir->bandeira)) cont++;
+        if (celula->dcesq && (celula->dcesq->bandeira)) cont++;
         return cont;
     }
     return EXIT_FAILURE;
@@ -150,14 +150,14 @@ int cobertos_perto(Tabuleiro *tabuleiro , int x, int y){
 
     if (celula->aberto) {
         int cont = 0;
-        (celula->cima && !(celula->cima->aberto)) ? (cont++) : (cont=cont);
-        (celula->baixo && !(celula->baixo->aberto)) ? (cont++) : (cont=cont);
-        (celula->esq && !(celula->esq->aberto)) ? (cont++) : (cont=cont);
-        (celula->dir && !(celula->dir->aberto)) ? (cont++) : (cont=cont);
-        (celula->dbdir && !(celula->dbdir->aberto)) ? (cont++) : (cont=cont);
-        (celula->dbesq && !(celula->dbesq->aberto)) ? (cont++) : (cont=cont);
-        (celula->dcdir && !(celula->dcdir->aberto)) ? (cont++) : (cont=cont);
-        (celula->dcesq && !(celula->dcesq->aberto)) ? (cont++) : (cont=cont);
+        if (celula->cima && !(celula->cima->aberto)) cont++;
+        if (celula->baixo && !(celula->baixo->aberto)) cont++;
+        if (celula->esq && !(celula->esq->aberto)) cont++;
+        if (celula->dir && !(celula->dir->aberto)) cont++;
+        if (celula->dbdir && !(celula->dbdir->aberto)) cont++;
+        if (celula->dbesq && !(celula->dbesq->aberto)) cont++;
+        if (celula->dcdir && !(celula->dcdir->aberto)) cont++;
+        if (celula->dcesq && !(celula->dcesq->aberto)) cont++;
         return cont;
     }
     return EXIT_FAILURE; 
@@ -280,7 +280,7 @@ void Dica(Tabuleiro *tabuleiro){
     return;
 }
 
-bool jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
+bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
     int abertas = 0;
     int total_celulas = tabuleiro->altura * tabuleiro->largura;
 
@@ -304,4 +304,39 @@ void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
             if (!(celula->aberto)) celula->aberto = true;
         }
     }
+    return;
+}
+
+void Dados_iniciais (int *largura, int *altura, int *num_bombas) {
+    // declaração de variáveis: as variáveis auxiliares serão utilziadas pra não ficar mudando o valor dentro de main todo tempo
+    int aux1, aux2, aux3;
+    printf("Por favor, insira a largura desejada: (Min = 5, Max = 40)\n");
+    scanf("%d", &aux1);
+    while (aux1 > 40) {
+        printf("Por favor, insira a largura desejada, agora respeitando os limites (Min = 5, Max = 40)\n");
+    scanf("%d", &aux1);
+    }
+
+    printf("Por favor, insira a altura desejada: (Min = 5, Max = 26)\n");
+    scanf("%d", &aux2);
+
+    while (aux2 > 26) {
+        printf("Por favor, insira a altura desejada, agora respeitando os limites (Min = 5, Max = 26)\n");
+    scanf("%d", &aux2);
+    }
+
+    int num_max_bombas = ((aux1+1)*(aux2+1))/5;
+
+    int num_min_bombas = 7;
+
+    printf("Digite a quantidade desejada de bombas (Min = %d, Max = %d)\n", num_min_bombas, num_max_bombas);
+    scanf("%d", &aux3);
+
+    while (aux3 < num_min_bombas || aux3 > num_max_bombas) {
+        printf("Digite a quantidade desejada de bombas, respeitando os limites (Min = %d, Max = %d)\n", num_min_bombas, num_max_bombas);
+        scanf("%d", &aux3);
+    }
+    *num_bombas = aux3;
+    *largura = aux1;
+    *altura = aux2;
 }

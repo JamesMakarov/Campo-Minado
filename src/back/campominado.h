@@ -29,7 +29,8 @@ void Dica(Tabuleiro *tabuleiro);
 void bandeira(Tabuleiro *tabuleiro, int x, int y);
 int cobertos_perto(Tabuleiro *tabuleiro , int x, int y);
 int bandeiras_perto(Tabuleiro *tabuleiro , int x, int y);
-bool jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais);
+bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais);
 void Mostrar_tabuleiro (Tabuleiro *tabuleiro);
+void Dados_iniciais (int *largura, int *altura, int *num_bombas);
 
 #endif
