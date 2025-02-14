@@ -44,7 +44,7 @@ int main() {
 
     
     printf("Celula (0,0): x=%d, y=%d\n", tabuleiro.grid[0][0].x, tabuleiro.grid[0][0].y);
-    printf("Celula (19,19): x=%d, y=%d\n", tabuleiro.grid[largura-1][altura-1].x, tabuleiro.grid[largura-1][altura-1].y);
+    printf("Celula (19,19): x=%d, y=%d\n", tabuleiro.grid[altura-1][largura-1].x, tabuleiro.grid[altura-1][largura-1].y);
 
     // Libera memória
     Liberar_Tabuleiro(&tabuleiro);

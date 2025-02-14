@@ -23,8 +23,13 @@ void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura);
 void Conectar_Vizinhos(Tabuleiro *tabuleiro);
 void Liberar_Tabuleiro(Tabuleiro *tabuleiro);
 void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas);
-void Bombas_Perto_Celula(Tabuleiro *tabuleiro, int bombas);
+void Bombas_Perto_Celula(Tabuleiro *tabuleiro);
 void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y);
-
+void Dica(Tabuleiro *tabuleiro);
+void bandeira(Tabuleiro *tabuleiro, int x, int y);
+int cobertos_perto(Tabuleiro *tabuleiro , int x, int y);
+int bandeiras_perto(Tabuleiro *tabuleiro , int x, int y);
+bool jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais);
+void Mostrar_tabuleiro (Tabuleiro *tabuleiro);
 
 #endif
