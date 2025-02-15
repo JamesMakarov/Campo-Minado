@@ -19,7 +19,7 @@ typedef struct Tabuleiro {
 } Tabuleiro;
 
 Celula* CriarNova(int x, int y);
-void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura);
+void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura);
 void Conectar_Vizinhos(Tabuleiro *tabuleiro);
 void Liberar_Tabuleiro(Tabuleiro *tabuleiro);
 void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas);
@@ -31,6 +31,6 @@ int cobertos_perto(Tabuleiro *tabuleiro , int x, int y);
 int bandeiras_perto(Tabuleiro *tabuleiro , int x, int y);
 bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais);
 void Mostrar_tabuleiro (Tabuleiro *tabuleiro);
-void Dados_iniciais (int *largura, int *altura, int *num_bombas);
+void Dados_iniciais (int *altura, int *largura, int *num_bombas);
 
 #endif
