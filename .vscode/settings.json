@@ -12,6 +12,7 @@
         "**/templates/**/*.html": "django-html",
         "**/base_templates/**/*.html": "django-html",
         "**/requirements{/**,*}.{txt,in}": "pip-requirements",
-        "campominado.h": "c"
+        "campominado.h": "c",
+        "stdbool.h": "c"
     }
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "campominado.h"
+#include "back/campominado.h"
+#include "interface/interface.h"
 
 
 int main() {
