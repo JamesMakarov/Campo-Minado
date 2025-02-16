@@ -84,7 +84,23 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
 
 bool Regras() {
     char pronto;
-    printf("Essas são as regras, pronto? Digite qualquer coisa no terminal e aperte Enter.\n");
+    system("clear"); /*Limpa a tela no Linux(para quando o Miguel GOAT for corrigir )*/
+    system("cls");  /*Limpa a tela no Windows*/
+    printf("\033[0;33m"); /*Aqui é pra cor continuar igual ao do menu.*/
+    printf("\n\n");
+    printf("   ==================================\n");
+    printf("             REGRAS DO JOGO          \n");
+    printf("   ==================================\n");
+    printf("\n");
+    printf("1 - Objetivo: Abrir todas as celulas seguras do tabuleiro sem escolher a coordenada de uma mina.\n\n");
+    printf("2 - Tabuleiro: Consiste em uma grade com celulas ocultas, algumas contendo minas e outras vazias ou com numeros.\n\n");
+    printf("3 - Numeros: Ao escolher a coordenada de uma celula vazia, um numero pode aparecer indicando quantas minas estao nas celulas adjacentes.\n\n");
+    printf("4 - Marcacao de Minas: O jogador pode marcar celulas suspeitas com bandeiras para indicar possiveis minas.\n\n");
+    printf("5 - Explosao: Se o jogador escolher a coordenada de uma celula com mina, o jogo termina imediatamente com derrota.\n\n");
+    printf("6 - Abertura Automatica: Se uma celula sem mina e sem numeros for aberta, as celulas vizinhas tambem sao reveladas automaticamente ate encontrar numeros.\n\n");
+    printf("7 - Vitoria: O jogo eh vencido quando todas as celulas seguras forem reveladas e todas as minas estiverem corretamente marcadas.\n\n");
+    printf("\033[0m"); /*Retorna para a cor do terminal*/
+    printf("Essas sao as regras, pronto? Digite qualquer coisa no terminal e aperte Enter.\n");
     getchar();
     scanf("%c", &pronto);
     if (pronto != '\n') {
@@ -92,6 +108,3 @@ bool Regras() {
     }
     return false;  
 }
-
-
-
