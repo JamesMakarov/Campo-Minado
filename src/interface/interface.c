@@ -57,24 +57,31 @@ void opcoes(Tabuleiro *tabuleiro, short int opcao) {
 }
 
 void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
-    printf("\nTabuleiro:\n");
+    /*Para exibir números das colunas (alinhados verticalmente)*/
+    printf("     ");  /*Espaço para alinhar com as letras das linhas*/
+    for (int j = 0; j < tabuleiro->altura; j++) {
+        printf(" %2d  ", j + 1);  /*Números das colunas com 2 digitos*/
+    }
+    printf("\n");
 
+    // Exibe o tabuleiro com letras das linhas
     for (int i = 0; i < tabuleiro->largura; i++) {
+        printf("%2c  ", 'A' + i);  // Letras das linhas (A, B, C, ...)
         for (int j = 0; j < tabuleiro->altura; j++) {
             Celula *celula = &tabuleiro->grid[i][j];
 
             if (celula->aberto) {
                 if (celula->bomba) {
-                    printf(" * ");  // Exibe bomba
+                    printf("  *  ");  // Exibe bomba
                 } else if (celula->bombas > 0) {
-                    printf(" %d ", celula->bombas);  // Exibe número de bombas próximas
+                    printf("  %d  ", celula->bombas);  // Exibe número de bombas próximas
                 } else {
-                    printf("   ");  // Exibe célula vazia (sem bombas próximas)
+                    printf("     ");  // Exibe célula vazia (sem bombas próximas)
                 }
             } else if (celula->bandeira) {
-                printf(" F ");  // Exibe bandeira
+                printf("  F  ");  // Exibe bandeira
             } else {
-                printf(" # ");  // Exibe célula fechada
+                printf("  #  ");  // Exibe célula fechada
             }
         }
         printf("\n");  // Quebra de linha após cada linha do tabuleiro
