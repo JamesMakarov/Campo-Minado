@@ -5,7 +5,7 @@
 void MenuPrincipal();
 void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura);  // Alterado para receber int
 void opcoes(Tabuleiro *tabuleiro, short int opcao);
-void Pegar_Jogada(int *x, int *y, char *acao);
+void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao);
 void Mostrar_Resultado(bool venceu);
 bool Regras();
 

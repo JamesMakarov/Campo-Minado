@@ -32,5 +32,6 @@ int bandeiras_perto(Tabuleiro *tabuleiro , int x, int y);
 bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais);
 void Mostrar_tabuleiro (Tabuleiro *tabuleiro);
 void Dados_iniciais (int *altura, int *largura, int *num_bombas);
+bool Jogador_perdeu(Tabuleiro *tabuleiro, int x, int y);
 
 #endif

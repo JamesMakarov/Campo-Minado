@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <string.h> 
+#include <ctype.h> 
 #include "interface.h"
 #include "../back/campominado.h"
 
@@ -32,7 +34,48 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
     Dados_iniciais(altura, largura, num_bombas);
     Inicializando_Tabuleiro(tabuleiro, *largura, *altura);
     Distribuir_Bombas(tabuleiro, *num_bombas);
-    Exibir_Tabuleiro(tabuleiro, *largura, *altura);
+    Bombas_Perto_Celula(tabuleiro);
+
+    int x, y;
+    char acao;
+    bool jogo_ativo = true;
+
+    while (jogo_ativo) {
+        Exibir_Tabuleiro(tabuleiro, *largura, *altura);
+        Pegar_Jogada(tabuleiro, &x, &y, &acao);
+
+        if (acao == 'A') {
+            if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
+                printf("Coordenada invalida! Tente novamente.\n");
+                continue;
+            }
+
+            Revelar_celulas(tabuleiro, x, y);
+            if (Jogador_perdeu(tabuleiro, x, y)) {
+                printf("Você acertou uma mina! Fim de jogo.\n");
+                Mostrar_tabuleiro(tabuleiro);
+                jogo_ativo = false;
+            } else if (Jogador_venceu(tabuleiro, *num_bombas)) {
+                printf("Parabens! Voce venceu!\n");
+                Mostrar_tabuleiro(tabuleiro);
+                jogo_ativo = false;
+            }
+        } else if (acao == '#') {
+            if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
+                printf("Coordenada invalida! Tente novamente.\n");
+                continue;
+            }
+            bandeira(tabuleiro, x, y);  // Marcar bandeira
+        } else if (acao == '!') {
+            if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
+                printf("Coordenada invalida! Tente novamente.\n");
+                continue;
+            }
+            bandeira(tabuleiro, x, y);  // Desmarcar bandeira
+        } else {
+            printf("Acao invalida! Tente novamente.\n");
+        }
+    }
 }
 
 void opcoes(Tabuleiro *tabuleiro, short int opcao) {
@@ -114,4 +157,39 @@ bool Regras() {
         return true; 
     }
     return false;  
+}
+
+void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
+    char entrada[10];
+    bool entrada_valida = false;
+
+    while (!entrada_valida) {
+        printf("# - Marcar bandeira.\n! - Desmarca bandeira.\n");
+        printf("Digite sua jogada (ex: A15, #B7, !C3): ");
+        scanf("%s", entrada);
+
+        /*Verifica se a entrada tem pelo menos 2 caracteres*/
+        if (strlen(entrada) < 2) {
+            printf("Entrada inválida! Tente novamente.\n");
+            continue;
+        }
+
+        /*Verifica se a jogada é de marcação/desmarcação ou abertura*/
+        if (entrada[0] == '#' || entrada[0] == '!') {
+            *acao = entrada[0];  /*Ação: marcar ou desmarcar bandeira*/
+            *x = toupper(entrada[1]) - 'A';  /*Linha (A=0, B=1, ...)*/
+            *y = atoi(&entrada[2]) - 1;  /*Coluna (1=0, 2=1, ...)*/
+        } else {
+            *acao = 'A';  /*Ação: abrir célula*/
+            *x = toupper(entrada[0]) - 'A';  
+            *y = atoi(&entrada[1]) - 1;  
+        }
+
+        /*Aqui é para verificar se as coordenadas estão dentro dos limites do tabuleiro*/
+        if (*x >= 0 && *x < tabuleiro->largura && *y >= 0 && *y < tabuleiro->altura) {
+            entrada_valida = true;
+        } else {
+            printf("Coordenada inválida! Tente novamente.\n");
+        }
+    }
 }
