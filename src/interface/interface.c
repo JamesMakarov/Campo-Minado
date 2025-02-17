@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <string.h> 
 #include <ctype.h> 
+#include <conio.h>
 #include "interface.h"
 #include "../back/campominado.h"
 
@@ -16,11 +17,11 @@ void MenuPrincipal(Tabuleiro *tabuleiro) {
     printf("             CAMPO MINADO            \n");
     printf("   ==================================\n");
     printf("\n");
-    sleep(1);
+    
     printf("           1 - Iniciar Jogo         \n");
-    sleep(1);
+    
     printf("           2 - Regras               \n");
-    sleep(1);
+   
     printf("           3 - Sair                 \n");
     printf("\n");
     printf("   Escolha uma opcao: ");
@@ -65,13 +66,13 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
                 printf("Coordenada invalida! Tente novamente.\n");
                 continue;
             }
-            bandeira(tabuleiro, x, y);  // Marcar bandeira
+            bandeira(tabuleiro, y, x);  // Marcar bandeira
         } else if (acao == '!') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
                 printf("Coordenada invalida! Tente novamente.\n");
                 continue;
             }
-            bandeira(tabuleiro, x, y);  // Desmarcar bandeira
+            bandeira(tabuleiro, y, x);  // Desmarcar bandeira
         } else {
             printf("Acao invalida! Tente novamente.\n");
         }
@@ -101,15 +102,25 @@ void opcoes(Tabuleiro *tabuleiro, short int opcao) {
 
 void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
     /*Para exibir números das colunas (alinhados verticalmente)*/
+    printf("\033[0;33m");
     printf("     ");  /*Espaço para alinhar com as letras das linhas*/
-    for (int j = 0; j < tabuleiro->altura; j++) {
-        printf(" %2d  ", j + 1);  /*Números das colunas com 2 digitos*/
+    for (int i = 0; i < tabuleiro->altura; i++) { 
+        int var = (i + 1)/10;
+        printf(" %d   ", var);
     }
     printf("\n");
+    printf("     ");
+    for (int j = 0; j < tabuleiro->altura; j++) {
+        printf("%2d   ", (j + 1) %10);  /*Números das colunas com 2 digitos*/
+    }
+    printf("\n");
+    printf("\033[0m");
 
     // Exibe o tabuleiro com letras das linhas
     for (int i = 0; i < tabuleiro->largura; i++) {
+        printf("\033[0;33m");
         printf("%2c  ", 'A' + i);  // Letras das linhas (A, B, C, ...)
+        printf("\033[0m");
         for (int j = 0; j < tabuleiro->altura; j++) {
             Celula *celula = &tabuleiro->grid[i][j];
 
@@ -117,14 +128,18 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
                 if (celula->bomba) {
                     printf("  *  ");  // Exibe bomba
                 } else if (celula->bombas > 0) {
+                    printf("\033[36m");
                     printf("  %d  ", celula->bombas);  // Exibe número de bombas próximas
+                    printf("\033[0m");
                 } else {
                     printf("     ");  // Exibe célula vazia (sem bombas próximas)
                 }
             } else if (celula->bandeira) {
-                printf("  F  ");  // Exibe bandeira
+                printf("  !  ");  // Exibe bandeira
             } else {
+                printf("\033[47m\033[32m");
                 printf("  #  ");  // Exibe célula fechada
+                printf("\033[0m");
             }
         }
         printf("\n");  // Quebra de linha após cada linha do tabuleiro
@@ -177,12 +192,12 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
         /*Verifica se a jogada é de marcação/desmarcação ou abertura*/
         if (entrada[0] == '#' || entrada[0] == '!') {
             *acao = entrada[0];  /*Ação: marcar ou desmarcar bandeira*/
-            *x = toupper(entrada[1]) - 'A';  /*Linha (A=0, B=1, ...)*/
-            *y = atoi(&entrada[2]) - 1;  /*Coluna (1=0, 2=1, ...)*/
+            *y = toupper(entrada[1]) - 'A';  /*Linha (A=0, B=1, ...)*/
+            *x = atoi(&entrada[2]) - 1;  /*Coluna (1=0, 2=1, ...)*/
         } else {
             *acao = 'A';  /*Ação: abrir célula*/
-            *x = toupper(entrada[0]) - 'A';  
-            *y = atoi(&entrada[1]) - 1;  
+            *y = toupper(entrada[0]) - 'A';  
+            *x = atoi(&entrada[1]) - 1;  
         }
 
         /*Aqui é para verificar se as coordenadas estão dentro dos limites do tabuleiro*/
@@ -192,4 +207,9 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
             printf("Coordenada inválida! Tente novamente.\n");
         }
     }
+}
+
+void Inserir_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
+    int linha;
+    char coluna;
 }

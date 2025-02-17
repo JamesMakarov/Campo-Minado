@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include <conio.h>
 #include "campominado.h"
 
@@ -34,8 +35,8 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
         scanf("%d", &aux3);
     }
     *num_bombas = aux3;
-    *altura = aux1;
-    *largura = aux2;
+    *altura = aux2; 
+    *largura = aux1;
 }
 
 
@@ -46,16 +47,10 @@ Celula* CriarNova(int x, int y) {
         printf("Erro ao alocar memória para célula.\n");
         exit(1);
     }
-
-    // Valores padrão
-    nova->aberto = false;
-    nova->bandeira = false;
-    nova->bomba = false;
+    nova->aberto = nova->bandeira = nova->bomba = false;
     nova->bombas = 0;
     nova->x = x;
     nova->y = y;
-
-    // Ponteiros nulos
     nova->cima = nova->baixo = nova->esq = nova->dir = NULL;
     nova->dcesq = nova->dcdir = nova->dbesq = nova->dbdir = NULL;
 
@@ -123,6 +118,7 @@ void Liberar_Tabuleiro(Tabuleiro *tabuleiro) {
 }
 
 void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas) {
+    srand(time(NULL));
     int a, b;
     for (int i = 0; i < num_bombas; i++) {
         a = rand() % tabuleiro->altura;
@@ -137,22 +133,24 @@ void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas) {
 }
 
 void Bombas_Perto_Celula(Tabuleiro *tabuleiro){
-    for (int i = 0; i < tabuleiro->largura; i++) {
-        for (int j = 0; j < tabuleiro->altura; j++){
+    for (int j = 0; j < tabuleiro->altura; j++) {
+        for (int i = 0; i < tabuleiro->largura; i++){
             int cont = 0;
-            if (tabuleiro->grid[i][j].cima && tabuleiro->grid[i][j].cima->bomba) cont++;
-            if (tabuleiro->grid[i][j].baixo && tabuleiro->grid[i][j].baixo->bomba) cont++;
-            if (tabuleiro->grid[i][j].esq && tabuleiro->grid[i][j].esq->bomba) cont++;
-            if (tabuleiro->grid[i][j].dir && tabuleiro->grid[i][j].dir->bomba) cont++;
-            if (tabuleiro->grid[i][j].dbdir && tabuleiro->grid[i][j].dbdir->bomba) cont++;
-            if (tabuleiro->grid[i][j].dbesq && tabuleiro->grid[i][j].dbesq->bomba) cont++;
-            if (tabuleiro->grid[i][j].dcdir && tabuleiro->grid[i][j].dcdir->bomba) cont++;
-            if (tabuleiro->grid[i][j].dcesq && tabuleiro->grid[i][j].dcesq->bomba) cont++;
-            tabuleiro->grid[i][j].bombas = cont;
-            
+            Celula *celula = &tabuleiro->grid[j][i]; 
+            if (celula->cima && celula->cima->bomba) cont++;
+            if (celula->baixo && celula->baixo->bomba) cont++;
+            if (celula->esq && celula->esq->bomba) cont++;
+            if (celula->dir && celula->dir->bomba) cont++;
+            if (celula->dbdir && celula->dbdir->bomba) cont++;
+            if (celula->dbesq && celula->dbesq->bomba) cont++;
+            if (celula->dcdir && celula->dcdir->bomba) cont++;
+            if (celula->dcesq && celula->dcesq->bomba) cont++;
+
+            celula->bombas = cont;
         }
     }
 }
+
 
 int bandeiras_perto(Tabuleiro *tabuleiro , int x, int y){
     if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura) {
@@ -212,63 +210,34 @@ void bandeira(Tabuleiro *tabuleiro, int x, int y){
     return;
 }
 
+
 void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
+    // Verifica limites do tabuleiro
     if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura) {
         return; 
     }
-    
+
     Celula *celula = &tabuleiro->grid[y][x];
 
-    if (celula->aberto) {
-        //contando as bandeiras ao redor  
-        int cont = bandeiras_perto(tabuleiro, x, y);
-        //se o numero de bandeiras for igual ao de bombas as células cobertas e sem bandeira sâo clicadas 
-        if( cont == celula->bombas){
-            if(celula->dcesq && !(celula->dcesq->bandeira) && !(celula->dcesq->aberto))
-                Revelar_celulas(tabuleiro, x - 1, y - 1); 
-            if(celula->esq && !(celula->esq->bandeira)&& !(celula->esq->aberto))
-                Revelar_celulas(tabuleiro, x, y - 1); 
-            if(celula->dbesq && !(celula->dbesq->bandeira)&& !(celula->dbesq->aberto))     
-                Revelar_celulas(tabuleiro, x + 1, y - 1);
-            if(celula->cima && !(celula->cima->bandeira)&& !(celula->cima->aberto))  
-                Revelar_celulas(tabuleiro, x - 1, y);
-            if(celula->baixo && !(celula->baixo->bandeira)&& !(celula->baixo->aberto))     
-                Revelar_celulas(tabuleiro, x + 1, y);
-            if(celula->dcdir && !(celula->dcdir->bandeira)&& !(celula->dcdir->aberto))    
-                Revelar_celulas(tabuleiro, x - 1, y + 1); 
-            if(celula->dir && !(celula->dir->bandeira)&& !(celula->dir->aberto))
-                Revelar_celulas(tabuleiro, x, y + 1); 
-            if(celula->dbdir && !(celula->dbdir->bandeira)&& !(celula->dbdir->aberto))     
-                Revelar_celulas(tabuleiro, x + 1, y + 1);  
-        }
+    // Retorna se já estiver aberta ou se for uma bomba
+    if (celula->aberto || celula->bomba) {
         return;
     }
 
     celula->aberto = true;
 
-    if (celula->bomba) {
-        return;
-    }
-    //se for 0 ele clica em todos os cobertos ao redor dele 
+    // Abre automaticamente as células vizinhas se não houver bombas ao redor
     if (celula->bombas == 0) {
-        if(!(celula->dcesq->aberto))
-            Revelar_celulas(tabuleiro, x - 1, y - 1);
-        if(!(celula->esq->aberto))
-            Revelar_celulas(tabuleiro, x, y - 1);
-        if(!(celula->dbesq->aberto))   
-            Revelar_celulas(tabuleiro, x + 1, y - 1);
-        if(!(celula->cima->aberto))  
-            Revelar_celulas(tabuleiro, x - 1, y); 
-        if(!(celula->baixo->aberto))    
-            Revelar_celulas(tabuleiro, x + 1, y);   
-        if(!(celula->dcdir->aberto)) 
-            Revelar_celulas(tabuleiro, x - 1, y + 1);
-        if(!(celula->dir->aberto))  
-            Revelar_celulas(tabuleiro, x, y + 1);  
-        if(!(celula->dbdir->aberto))    
-            Revelar_celulas(tabuleiro, x + 1, y + 1);  
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx != 0 || dy != 0) {
+                    Revelar_celulas(tabuleiro, x + dx, y + dy);
+                }
+            }
+        }
     }
 }
+
 
 void Dica(Tabuleiro *tabuleiro){
     //percorre ate achar uma célula aberta em que a dica pode ser aplicada 
@@ -329,7 +298,10 @@ bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
 
 bool Jogador_perdeu (Tabuleiro *tabuleiro, int x, int y) {
     Celula *celula = &tabuleiro->grid[x][y];
-    return(celula->bomba == true);
+    if (celula->bomba) {
+        return true;
+    }
+    return false;
 }
 
 void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
