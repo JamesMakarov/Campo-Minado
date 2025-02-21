@@ -37,7 +37,7 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
     *num_bombas = aux3;
     *altura = aux2; 
     *largura = aux1;
-    printf("Número de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
+    printf("Numero de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
 }
 
 
@@ -45,7 +45,7 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
 Celula* CriarNova(int x, int y) {
     Celula* nova = (Celula*)malloc(sizeof(Celula));
     if (!nova) {
-        printf("Erro ao alocar memória para célula.\n");
+        printf("Erro ao alocar memoria para celula.\n");
         exit(1);
     }
     nova->aberto = nova->bandeira = nova->bomba = false;
@@ -65,14 +65,14 @@ void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura, int 
     // Alocando memória para as linhas da matriz (o número de linhas será 'altura')
     tabuleiro->grid = (Celula**)malloc(altura * sizeof(Celula*));
     if (!tabuleiro->grid) {
-        printf("Erro ao alocar memória para o tabuleiro.\n");
+        printf("Erro ao alocar memoria para o tabuleiro.\n");
         exit(1);
     }
 
     for (int i = 0; i < altura; i++) {  // Aqui o loop vai até 'altura', já que 'altura' são as linhas
         tabuleiro->grid[i] = (Celula*)malloc(largura * sizeof(Celula));  // Cada linha vai ter 'largura' células
         if (!tabuleiro->grid[i]) {
-            printf("Erro ao alocar memória para linha do tabuleiro.\n");
+            printf("Erro ao alocar memoria para linha do tabuleiro.\n");
             exit(1);
         }
 
@@ -282,7 +282,7 @@ void Dica(Tabuleiro *tabuleiro){
         }
     }
     //se não encontrar nenhuma célula em que possa aplicar a dica 
-    printf("não foi possível dar uma dica para o jogo atual, é possível que a jogada a seguir dependa de sorte.");
+    printf("nao foi possível dar uma dica para o jogo atual, eh possível que a jogada a seguir dependa de sorte.");
     return;
 }
 
@@ -316,3 +316,15 @@ void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
     return;
 }
 
+
+int ContarBandeiras(Tabuleiro *tabuleiro) {
+    int contador = 0;
+    for (int i = 0; i < tabuleiro->largura; i++) {
+        for (int j = 0; j < tabuleiro->altura; j++) {
+            if (tabuleiro->grid[i][j].bandeira) {
+                contador++;
+            }
+        }
+    }
+    return contador;
+}
