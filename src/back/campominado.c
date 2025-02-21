@@ -10,7 +10,7 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
     int aux1, aux2, aux3;
     printf("Por favor, insira a altura desejada: (Min = 5, Max = 40)\n");
     scanf("%d", &aux1);
-    while (aux1 > 40) {
+    while (5 > aux1 > 40) {
         printf("Por favor, insira a altura desejada, agora respeitando os limites (Min = 5, Max = 40)\n");
     scanf("%d", &aux1);
     }
@@ -18,7 +18,7 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
     printf("Por favor, insira a largura desejada: (Min = 5, Max = 26)\n");
     scanf("%d", &aux2);
 
-    while (aux2 > 26) {
+    while (5 > aux2 > 26) {
         printf("Por favor, insira a largura desejada, agora respeitando os limites (Min = 5, Max = 26)\n");
     scanf("%d", &aux2);
     }
@@ -37,6 +37,7 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
     *num_bombas = aux3;
     *altura = aux2; 
     *largura = aux1;
+    printf("Número de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
 }
 
 
@@ -56,55 +57,56 @@ Celula* CriarNova(int x, int y) {
 
     return nova;
 }
-
 // Inicializa o tabuleiro com uma matriz de células
-void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura) {
+void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura, int num_bombas) {
     tabuleiro->altura = altura;
     tabuleiro->largura = largura;
 
-    // Alocando memória para o grid (matriz de células)
-    tabuleiro->grid = (Celula**)malloc(largura * sizeof(Celula));
+    // Alocando memória para as linhas da matriz (o número de linhas será 'altura')
+    tabuleiro->grid = (Celula**)malloc(altura * sizeof(Celula*));
     if (!tabuleiro->grid) {
         printf("Erro ao alocar memória para o tabuleiro.\n");
         exit(1);
     }
 
-    for (int i = 0; i < largura; i++) {
-        tabuleiro->grid[i] = (Celula*)malloc(altura * sizeof(Celula));
+    for (int i = 0; i < altura; i++) {  // Aqui o loop vai até 'altura', já que 'altura' são as linhas
+        tabuleiro->grid[i] = (Celula*)malloc(largura * sizeof(Celula));  // Cada linha vai ter 'largura' células
         if (!tabuleiro->grid[i]) {
             printf("Erro ao alocar memória para linha do tabuleiro.\n");
             exit(1);
         }
 
-        // Criando células
-        for (int j = 0; j < altura; j++) {
-            tabuleiro->grid[i][j] = *CriarNova(j, i);
+        // Inicializa as células com valores padrão
+        for (int j = 0; j < largura; j++) {  // Agora o loop vai até 'largura', que são as colunas
+            tabuleiro->grid[i][j] = *CriarNova(i, j);  // Mantendo a referência correta para cada célula
         }
     }
 
     // Conecta as células vizinhas
     Conectar_Vizinhos(tabuleiro);
+    Distribuir_Bombas(tabuleiro, num_bombas);
 }
 
-// Conecta as células vizinhas usando os ponteiros
+
+// Conecta as células vizinhas corretamente
 void Conectar_Vizinhos(Tabuleiro *tabuleiro) {
-    for (int i = 0; i < tabuleiro->largura; i++) {
-        for (int j = 0; j < tabuleiro->altura; j++) {
+    for (int i = 0; i < tabuleiro->altura; i++) {
+        for (int j = 0; j < tabuleiro->largura; j++) {
             Celula *atual = &tabuleiro->grid[i][j];
 
             // Cima e baixo
             if (i > 0) atual->cima = &tabuleiro->grid[i-1][j];
-            if (i < tabuleiro->largura - 1) atual->baixo = &tabuleiro->grid[i+1][j];
+            if (i < tabuleiro->altura - 1) atual->baixo = &tabuleiro->grid[i+1][j];
 
             // Esquerda e direita
             if (j > 0) atual->esq = &tabuleiro->grid[i][j-1];
-            if (j < tabuleiro->altura - 1) atual->dir = &tabuleiro->grid[i][j+1];
+            if (j < tabuleiro->largura - 1) atual->dir = &tabuleiro->grid[i][j+1];
 
             // Diagonais
             if (i > 0 && j > 0) atual->dcesq = &tabuleiro->grid[i-1][j-1];
-            if (i > 0 && j < tabuleiro->altura - 1) atual->dcdir = &tabuleiro->grid[i-1][j+1];
-            if (i < tabuleiro->largura - 1 && j > 0) atual->dbesq = &tabuleiro->grid[i+1][j-1];
-            if (i < tabuleiro->largura - 1 && j < tabuleiro->altura - 1) atual->dbdir = &tabuleiro->grid[i+1][j+1];
+            if (i > 0 && j < tabuleiro->largura - 1) atual->dcdir = &tabuleiro->grid[i-1][j+1];
+            if (i < tabuleiro->altura - 1 && j > 0) atual->dbesq = &tabuleiro->grid[i+1][j-1];
+            if (i < tabuleiro->altura - 1 && j < tabuleiro->largura - 1) atual->dbdir = &tabuleiro->grid[i+1][j+1];
         }
     }
 }
@@ -124,8 +126,8 @@ void Distribuir_Bombas(Tabuleiro *tabuleiro, int num_bombas) {
         a = rand() % tabuleiro->altura;
         b = rand() % tabuleiro->largura;
 
-        if (tabuleiro->grid[b][a].bomba == false) {
-            tabuleiro->grid[b][a].bomba = true;
+        if (tabuleiro->grid[a][b].bomba == false) {
+            tabuleiro->grid[a][b].bomba = true;
         } else {
             i--;
         }
@@ -196,7 +198,7 @@ int cobertos_perto(Tabuleiro *tabuleiro , int x, int y){
     return EXIT_FAILURE; 
 }
 
-void bandeira(Tabuleiro *tabuleiro, int x, int y){
+void bandeira(Tabuleiro *tabuleiro, int y, int x){
     if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura || tabuleiro->grid[x][y].aberto) {
         return; 
     }
@@ -217,7 +219,7 @@ void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
         return; 
     }
 
-    Celula *celula = &tabuleiro->grid[y][x];
+    Celula *celula = &tabuleiro->grid[x][y];
 
     // Retorna se já estiver aberta ou se for uma bomba
     if (celula->aberto || celula->bomba) {
@@ -305,8 +307,8 @@ bool Jogador_perdeu (Tabuleiro *tabuleiro, int x, int y) {
 }
 
 void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
-    for (int i = 0; i < tabuleiro->largura; i++) {
-        for (int j = 0; j < tabuleiro->altura; j++) {
+    for (int i = 0; i < tabuleiro->altura; i++) {
+        for (int j = 0; j < tabuleiro->largura; j++) {
             Celula *celula = &tabuleiro->grid[i][j];
             if (!(celula->aberto)) celula->aberto = true;
         }

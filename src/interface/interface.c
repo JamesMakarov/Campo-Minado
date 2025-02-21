@@ -33,8 +33,8 @@ void MenuPrincipal(Tabuleiro *tabuleiro) {
 
 void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
     Dados_iniciais(altura, largura, num_bombas);
-    Inicializando_Tabuleiro(tabuleiro, *largura, *altura);
-    Distribuir_Bombas(tabuleiro, *num_bombas);
+    Inicializando_Tabuleiro(tabuleiro, *largura, *altura, *num_bombas);
+    
     Bombas_Perto_Celula(tabuleiro);
 
     int x, y;
@@ -51,8 +51,8 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
                 continue;
             }
 
-            Revelar_celulas(tabuleiro, x, y);
-            if (Jogador_perdeu(tabuleiro, x, y)) {
+            Revelar_celulas(tabuleiro, y, x);
+            if (Jogador_perdeu(tabuleiro, y, x)) {
                 printf("Você acertou uma mina! Fim de jogo.\n");
                 Mostrar_tabuleiro(tabuleiro);
                 jogo_ativo = false;
@@ -66,13 +66,13 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
                 printf("Coordenada invalida! Tente novamente.\n");
                 continue;
             }
-            bandeira(tabuleiro, y, x);  // Marcar bandeira
+            bandeira(tabuleiro, x, y);  // Marcar bandeira
         } else if (acao == '!') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
                 printf("Coordenada invalida! Tente novamente.\n");
                 continue;
             }
-            bandeira(tabuleiro, y, x);  // Desmarcar bandeira
+            bandeira(tabuleiro, x, y);  // Desmarcar bandeira
         } else {
             printf("Acao invalida! Tente novamente.\n");
         }
@@ -122,7 +122,7 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
         printf("%2c  ", 'A' + i);  // Letras das linhas (A, B, C, ...)
         printf("\033[0m");
         for (int j = 0; j < tabuleiro->altura; j++) {
-            Celula *celula = &tabuleiro->grid[i][j];
+            Celula *celula = &tabuleiro->grid[j][i];
 
             if (celula->aberto) {
                 if (celula->bomba) {
@@ -183,24 +183,30 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
         printf("Digite sua jogada (ex: A15, #B7, !C3): ");
         scanf("%s", entrada);
 
-        /*Verifica se a entrada tem pelo menos 2 caracteres*/
+        /* Verifica se a entrada tem pelo menos 2 caracteres */
         if (strlen(entrada) < 2) {
             printf("Entrada inválida! Tente novamente.\n");
             continue;
         }
 
-        /*Verifica se a jogada é de marcação/desmarcação ou abertura*/
+        char *ptr;
         if (entrada[0] == '#' || entrada[0] == '!') {
-            *acao = entrada[0];  /*Ação: marcar ou desmarcar bandeira*/
-            *y = toupper(entrada[1]) - 'A';  /*Linha (A=0, B=1, ...)*/
-            *x = atoi(&entrada[2]) - 1;  /*Coluna (1=0, 2=1, ...)*/
+            *acao = entrada[0];  // Ação: marcar ou desmarcar bandeira
+            *x = toupper(entrada[1]) - 'A'; // Linha (A=0, B=1, ...)
+            *y = strtol(&entrada[2], &ptr, 10) - 1; // Coluna
         } else {
-            *acao = 'A';  /*Ação: abrir célula*/
-            *y = toupper(entrada[0]) - 'A';  
-            *x = atoi(&entrada[1]) - 1;  
+            *acao = 'A';  // Ação: abrir célula
+            *x = toupper(entrada[0]) - 'A';
+            *y = strtol(&entrada[1], &ptr, 10) - 1;
         }
 
-        /*Aqui é para verificar se as coordenadas estão dentro dos limites do tabuleiro*/
+        /* Verifica se a conversão falhou (ptr == &entrada[1] indica erro) */
+        if (ptr == &entrada[1] || *y < 0) {
+            printf("Número inválido! Tente novamente.\n");
+            continue;
+        }
+
+        /* Verifica se as coordenadas estão dentro dos limites do tabuleiro */
         if (*x >= 0 && *x < tabuleiro->largura && *y >= 0 && *y < tabuleiro->altura) {
             entrada_valida = true;
         } else {
@@ -209,7 +215,4 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
     }
 }
 
-void Inserir_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
-    int linha;
-    char coluna;
-}
+

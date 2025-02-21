@@ -7,6 +7,7 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura);  // Altera
 void opcoes(Tabuleiro *tabuleiro, short int opcao);
 void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao);
 void Mostrar_Resultado(bool venceu);
+void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas);
 bool Regras();
 
 #endif
