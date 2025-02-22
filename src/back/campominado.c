@@ -321,7 +321,8 @@ int ContarBandeiras(Tabuleiro *tabuleiro) {
     int contador = 0;
     for (int i = 0; i < tabuleiro->largura; i++) {
         for (int j = 0; j < tabuleiro->altura; j++) {
-            if (tabuleiro->grid[i][j].bandeira) {
+            Celula *celula = &tabuleiro->grid[j][i];
+            if (celula->bandeira) {
                 contador++;
             }
         }
