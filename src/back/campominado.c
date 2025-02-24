@@ -14,18 +14,18 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
     limpar_buffer();
     // declaração de variáveis: as variáveis auxiliares serão utilziadas pra não ficar mudando o valor dentro de main todo tempo
     int aux1, aux2, aux3;
-    printf("Por favor, insira a altura desejada: (Min = 5, Max = 40)\n");
+    printf("Por favor, insira a altura desejada: (Min = 5, Max = 26)\n");
     scanf("%d", &aux1);
-    while (5 > aux1 || aux1 > 40) {
-        printf("Por favor, insira a altura desejada, agora respeitando os limites (Min = 5, Max = 40)\n");
+    while (5 > aux1 || aux1 > 26) {
+        printf("Por favor, insira a altura desejada, agora respeitando os limites (Min = 5, Max = 26)\n");
     scanf("%d", &aux1);
     }
 
-    printf("Por favor, insira a largura desejada: (Min = 5, Max = 26)\n");
+    printf("Por favor, insira a largura desejada: (Min = 5, Max = 40)\n");
     scanf("%d", &aux2);
 
-    while (5 > aux2 || aux2 > 26) {
-        printf("Por favor, insira a largura desejada, agora respeitando os limites (Min = 5, Max = 26)\n");
+    while (5 > aux2 || aux2 > 40) {
+        printf("Por favor, insira a largura desejada, agora respeitando os limites (Min = 5, Max = 40)\n");
     scanf("%d", &aux2);
     }
 
@@ -41,9 +41,9 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
         scanf("%d", &aux3);
     }
     *num_bombas = aux3;
-    *altura = aux1; 
-    *largura = aux2;
-    printf("Número de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
+    *altura = aux2; 
+    *largura = aux1;
+    printf("Número de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas,*largura ,*altura );
 }
 
 
@@ -208,7 +208,7 @@ void bandeira(Tabuleiro *tabuleiro, int y, int x){
     if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura || tabuleiro->grid[x][y].aberto) {
         return; 
     }
-
+    
     Celula *celula = &tabuleiro->grid[x][y];
     //se não houver bandeira ele coloca e se já houver ele tira
     if(!(celula->bandeira)) celula->bandeira = true;
@@ -221,28 +221,66 @@ void bandeira(Tabuleiro *tabuleiro, int y, int x){
 
 void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
     // Verifica limites do tabuleiro
-    if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura) {
+    if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura ||tabuleiro->grid[x][y].bandeira ) {
         return; 
     }
 
     Celula *celula = &tabuleiro->grid[x][y];
 
     // Retorna se já estiver aberta ou se for uma bomba
-    if (celula->aberto || celula->bomba) {
+    if (celula->bomba) {
         return;
+    }
+
+    if(celula->aberto == true){
+        if (celula->bombas == bandeiras_perto(tabuleiro, x, y)) {
+            if(celula->cima != NULL){
+                if(!(celula->cima->bandeira) && !(celula->cima->aberto))
+                Revelar_celulas(tabuleiro, x-1, y);
+            }
+            if(celula->baixo != NULL){
+                if(!(celula->baixo->bandeira) && !(celula->baixo->aberto))
+                Revelar_celulas(tabuleiro, x+1, y);
+            }
+            if(celula->esq != NULL){
+                if(!(celula->esq->bandeira) && !(celula->esq->aberto))
+                Revelar_celulas(tabuleiro, x, y -1);
+            }
+            if(celula->dcesq != NULL){
+                if(!(celula->dcesq->bandeira) && !(celula->dcesq->aberto))
+                Revelar_celulas(tabuleiro, x-1, y-1);
+            }
+            if(celula->dbesq != NULL){
+                if(!(celula->dbesq->bandeira) && !(celula->dbesq->aberto))
+                Revelar_celulas(tabuleiro, x+1, y-1);
+            }
+            if(celula->dir != NULL){
+                if(!(celula->dir->bandeira) && !(celula->dir->aberto))
+                Revelar_celulas(tabuleiro, x, y+1);
+            }
+            if(celula->dcdir != NULL){
+                if(!(celula->dcdir->bandeira) && !(celula->dcdir->aberto))
+                Revelar_celulas(tabuleiro, x-1, y+1);
+            }
+            if(celula->dbdir != NULL){
+                if(!(celula->dbdir->bandeira) && !(celula->dbdir->aberto))
+                Revelar_celulas(tabuleiro, x+1, y+1);
+            }
+        }return;
     }
 
     celula->aberto = true;
 
     // Abre automaticamente as células vizinhas se não houver bombas ao redor
     if (celula->bombas == 0) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if (dx != 0 || dy != 0) {
-                    Revelar_celulas(tabuleiro, x + dx, y + dy);
-                }
-            }
-        }
+        if(celula->cima)Revelar_celulas(tabuleiro, x-1, y);
+        if(celula->baixo)Revelar_celulas(tabuleiro, x+1, y);
+        if(celula->esq)Revelar_celulas(tabuleiro, x, y -1);
+        if(celula->dcesq)Revelar_celulas(tabuleiro, x-1, y-1);
+        if(celula->dbesq)Revelar_celulas(tabuleiro, x+1, y-1);
+        if(celula->dir)Revelar_celulas(tabuleiro, x, y+1);
+        if(celula->dcdir)Revelar_celulas(tabuleiro, x-1, y+1);
+        if(celula->dbdir)Revelar_celulas(tabuleiro, x+1, y+1);
     }
 }
 
@@ -306,7 +344,7 @@ bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
 
 bool Jogador_perdeu (Tabuleiro *tabuleiro, int x, int y) {
     Celula *celula = &tabuleiro->grid[x][y];
-    if (celula->bomba) {
+    if (celula->bomba && !(celula->bandeira)) {
         return true;
     }
     return false;

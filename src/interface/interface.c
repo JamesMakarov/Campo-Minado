@@ -46,7 +46,7 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
     bool jogo_ativo = true;
 
     while (jogo_ativo) {
-        Exibir_Tabuleiro(tabuleiro, *largura, *altura);
+        Exibir_Tabuleiro(tabuleiro, *altura, *largura);
         Pegar_Jogada(tabuleiro, &x, &y, &acao);
 
         if (acao == 'A') {
@@ -120,7 +120,7 @@ void opcoes(Tabuleiro *tabuleiro, short int opcao) {
         }
 }
 
-void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
+void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura) {
     int bandeiras_marcadas = ContarBandeiras(tabuleiro);
     /*Para exibir números das colunas (alinhados verticalmente)*/
     printf("\033[0;33m");
@@ -152,7 +152,7 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
 
             if (celula->aberto) {
                 if (celula->bomba) {
-                    printf(" \033[43m\033[31m @ \033[0m ");  // Exibe bomba
+                    printf(" \033[0;31m\033[40m @ \033[0m ");  // Exibe bomba
                 } else if (celula->bombas > 0) {
                     
                     printf(" \033[47m\033[36m %d ", celula->bombas);  // Exibe número de bombas próximas
@@ -161,7 +161,7 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
                     printf("     ");  // Exibe célula vazia (sem bombas próximas)
                 }
             } else if (celula->bandeira) {
-                printf("  !  ");  // Exibe bandeira
+                printf(" \033[0;33m\033[41m ! \033[0m ");  // Exibe bandeira
             } else {
                 printf(" \033[47m\033[32m   \033[0m ");  // Exibe célula fechada
             }
@@ -203,7 +203,7 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
     bool entrada_valida = false;
 
     while (!entrada_valida) {
-        printf("# - Marcar bandeira.\n! - Desmarca bandeira.\n");
+        printf("# - Marcar bandeira.\n! - Desmarca bandeira.\nEnter - Pedir uma dica.\n");
         printf("Digite sua jogada (ex: A15, #B7, !C3): ");
         scanf("%s", entrada);
 
