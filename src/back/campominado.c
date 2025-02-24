@@ -5,7 +5,13 @@
 #include <conio.h>
 #include "campominado.h"
 
+void limpar_buffer() {
+    // Limpa o buffer do stdin
+    while(getchar() != '\n');
+}
+
 void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
+    limpar_buffer();
     // declaração de variáveis: as variáveis auxiliares serão utilziadas pra não ficar mudando o valor dentro de main todo tempo
     int aux1, aux2, aux3;
     printf("Por favor, insira a altura desejada: (Min = 5, Max = 40)\n");
@@ -35,8 +41,8 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
         scanf("%d", &aux3);
     }
     *num_bombas = aux3;
-    *altura = aux2; 
-    *largura = aux1;
+    *altura = aux1; 
+    *largura = aux2;
     printf("Número de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
 }
 
@@ -314,5 +320,18 @@ void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
         }
     }
     return;
+}
+
+int ContarBandeiras(Tabuleiro *tabuleiro) {
+    int contador = 0;
+    for (int i = 0; i < tabuleiro->largura; i++) {
+        for (int j = 0; j < tabuleiro->altura; j++) {
+            Celula *celula = &tabuleiro->grid[j][i];
+            if (celula->bandeira) {
+                contador++;
+            }
+        }
+    }
+    return contador;
 }
 
