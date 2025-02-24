@@ -5,12 +5,12 @@
 #include <conio.h>
 #include "campominado.h"
 
-void Dados_iniciais (int *largura, int *altura, int *num_bombas) {
+void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
     // declaração de variáveis: as variáveis auxiliares serão utilziadas pra não ficar mudando o valor dentro de main todo tempo
     int aux1, aux2, aux3;
     printf("Por favor, insira a altura desejada: (Min = 5, Max = 40)\n");
     scanf("%d", &aux1);
-    while (5 > aux1 && aux1 > 40) {
+    while (5 > aux1 || aux1 > 40) {
         printf("Por favor, insira a altura desejada, agora respeitando os limites (Min = 5, Max = 40)\n");
     scanf("%d", &aux1);
     }
@@ -18,7 +18,7 @@ void Dados_iniciais (int *largura, int *altura, int *num_bombas) {
     printf("Por favor, insira a largura desejada: (Min = 5, Max = 26)\n");
     scanf("%d", &aux2);
 
-    while (5 > aux2 && aux2 > 26) {
+    while (5 > aux2 || aux2 > 26) {
         printf("Por favor, insira a largura desejada, agora respeitando os limites (Min = 5, Max = 26)\n");
     scanf("%d", &aux2);
     }
@@ -35,9 +35,9 @@ void Dados_iniciais (int *largura, int *altura, int *num_bombas) {
         scanf("%d", &aux3);
     }
     *num_bombas = aux3;
-    *altura = aux1; 
-    *largura = aux2;
-    printf("Numero de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
+    *altura = aux2; 
+    *largura = aux1;
+    printf("Número de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
 }
 
 
@@ -45,7 +45,7 @@ void Dados_iniciais (int *largura, int *altura, int *num_bombas) {
 Celula* CriarNova(int x, int y) {
     Celula* nova = (Celula*)malloc(sizeof(Celula));
     if (!nova) {
-        printf("Erro ao alocar memoria para celula.\n");
+        printf("Erro ao alocar memória para célula.\n");
         exit(1);
     }
     nova->aberto = nova->bandeira = nova->bomba = false;
@@ -65,14 +65,14 @@ void Inicializando_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura, int 
     // Alocando memória para as linhas da matriz (o número de linhas será 'altura')
     tabuleiro->grid = (Celula**)malloc(altura * sizeof(Celula*));
     if (!tabuleiro->grid) {
-        printf("Erro ao alocar memoria para o tabuleiro.\n");
+        printf("Erro ao alocar memória para o tabuleiro.\n");
         exit(1);
     }
 
     for (int i = 0; i < altura; i++) {  // Aqui o loop vai até 'altura', já que 'altura' são as linhas
         tabuleiro->grid[i] = (Celula*)malloc(largura * sizeof(Celula));  // Cada linha vai ter 'largura' células
         if (!tabuleiro->grid[i]) {
-            printf("Erro ao alocar memoria para linha do tabuleiro.\n");
+            printf("Erro ao alocar memória para linha do tabuleiro.\n");
             exit(1);
         }
 
@@ -221,8 +221,8 @@ void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
 
     Celula *celula = &tabuleiro->grid[x][y];
 
-    
-    if (celula->aberto||celula->bomba) {
+    // Retorna se já estiver aberta ou se for uma bomba
+    if (celula->aberto || celula->bomba) {
         return;
     }
 
@@ -249,11 +249,9 @@ void Dica(Tabuleiro *tabuleiro){
             Celula *celula = &tabuleiro->grid[i][j];
 
             if((celula->aberto)){
-                //se o numero de cobertos perto e de bombas for igual todos tem bomba. ent ele coloca bandeira
-                int cont2 = bandeiras_perto(tabuleiro, i, j);
                 int cont = cobertos_perto(tabuleiro, i ,j);
-
-                if(cont == celula->bombas && cont > cont2){
+                //se o numero de cobertos perto e de bombas for igual todos tem bomba. ent ele coloca bandeira
+                if(cont == celula->bombas){
                     if(!(celula->dcesq->bandeira))
                         bandeira(tabuleiro, i - 1, j - 1);
                     if(!(celula->esq->bandeira))
@@ -269,22 +267,22 @@ void Dica(Tabuleiro *tabuleiro){
                     if(!(celula->dir->bandeira))  
                         bandeira(tabuleiro, i, j + 1);  
                     if(!(celula->dbdir->bandeira))    
-                        bandeira(tabuleiro, i + 1, j + 1);
-                    return;   
+                        bandeira(tabuleiro, i + 1, j + 1);    
                 }
                 else{
                     //se o numero de bandeiras e bombas ao redor é igual ent as celulas restantes são clicadas (o programa assume que as bandeiras posicionadas estão corretas )
+                    int cont2 = bandeiras_perto(tabuleiro, i, j);
                     if(cont2 == celula->bombas && cont > cont2){
                         Revelar_celulas(tabuleiro, i, j);
-                    return;
                     }
                 }
-                //assim q o programa realizar a primeira dica ele para 
+                //assim q o programa realizar a primeira dica ele para
+                return;
             }
         }
     }
     //se não encontrar nenhuma célula em que possa aplicar a dica 
-    printf("nao foi possível dar uma dica para o jogo atual, eh possível que a jogada a seguir dependa de sorte.");
+    printf("não foi possível dar uma dica para o jogo atual, é possível que a jogada a seguir dependa de sorte.");
     return;
 }
 
@@ -292,8 +290,8 @@ bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
     int abertas = 0;
     int total_celulas = tabuleiro->largura * tabuleiro->altura;
 
-    for (int i = 0; i < tabuleiro->largura; i++) {
-        for (int j = 0; j < tabuleiro->altura; j++) {
+    for (int i = 0; i < tabuleiro->altura; i++) {
+        for (int j = 0; j < tabuleiro->largura; j++) {
             if (tabuleiro->grid[i][j].aberto) abertas++;
         }
     }
@@ -306,7 +304,6 @@ bool Jogador_perdeu (Tabuleiro *tabuleiro, int x, int y) {
         return true;
     }
     return false;
-    
 }
 
 void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
@@ -319,16 +316,3 @@ void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
     return;
 }
 
-
-int ContarBandeiras(Tabuleiro *tabuleiro) {
-    int contador = 0;
-    for (int i = 0; i < tabuleiro->largura; i++) {
-        for (int j = 0; j < tabuleiro->altura; j++) {
-            Celula *celula = &tabuleiro->grid[j][i];
-            if (celula->bandeira) {
-                contador++;
-            }
-        }
-    }
-    return contador;
-}
