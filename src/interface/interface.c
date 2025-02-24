@@ -101,12 +101,16 @@ void opcoes(Tabuleiro *tabuleiro, short int opcao) {
 }
 
 void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
+    int bandeiras_marcadas = ContarBandeiras(tabuleiro);
     /*Para exibir números das colunas (alinhados verticalmente)*/
     printf("\033[0;33m");
+    printf("Bandeiras marcadas: %d\n", bandeiras_marcadas);
     printf("     ");  /*Espaço para alinhar com as letras das linhas*/
     for (int i = 0; i < tabuleiro->altura; i++) { 
         int var = (i + 1)/10;
-        printf(" %d   ", var);
+        if (var != 0) printf(" %d   ", var);
+        
+        else printf("     ");
     }
     printf("\n");
     printf("     ");
@@ -118,6 +122,8 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
 
     // Exibe o tabuleiro com letras das linhas
     for (int i = 0; i < tabuleiro->largura; i++) {
+        printf("\n");
+        
         printf("\033[0;33m");
         printf("%2c  ", 'A' + i);  // Letras das linhas (A, B, C, ...)
         printf("\033[0m");
@@ -126,20 +132,18 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int largura, int altura) {
 
             if (celula->aberto) {
                 if (celula->bomba) {
-                    printf("  *  ");  // Exibe bomba
+                    printf(" \033[43m\033[31m @ \033[0m ");  // Exibe bomba
                 } else if (celula->bombas > 0) {
-                    printf("\033[36m");
-                    printf("  %d  ", celula->bombas);  // Exibe número de bombas próximas
-                    printf("\033[0m");
+                    
+                    printf(" \033[47m\033[36m %d ", celula->bombas);  // Exibe número de bombas próximas
+                    printf("\033[0m ");
                 } else {
                     printf("     ");  // Exibe célula vazia (sem bombas próximas)
                 }
             } else if (celula->bandeira) {
                 printf("  !  ");  // Exibe bandeira
             } else {
-                printf("\033[47m\033[32m");
-                printf("  #  ");  // Exibe célula fechada
-                printf("\033[0m");
+                printf(" \033[47m\033[32m   \033[0m ");  // Exibe célula fechada
             }
         }
         printf("\n");  // Quebra de linha após cada linha do tabuleiro
@@ -215,4 +219,15 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
     }
 }
 
-
+int ContarBandeiras(Tabuleiro *tabuleiro) {
+    int contador = 0;
+    for (int i = 0; i < tabuleiro->largura; i++) {
+        for (int j = 0; j < tabuleiro->altura; j++) {
+            Celula *celula = &tabuleiro->grid[j][i];
+            if (celula->bandeira) {
+                contador++;
+            }
+        }
+    }
+    return contador;
+}

@@ -290,8 +290,8 @@ bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
     int abertas = 0;
     int total_celulas = tabuleiro->largura * tabuleiro->altura;
 
-    for (int i = 0; i < tabuleiro->largura; i++) {
-        for (int j = 0; j < tabuleiro->altura; j++) {
+    for (int i = 0; i < tabuleiro->altura; i++) {
+        for (int j = 0; j < tabuleiro->largura; j++) {
             if (tabuleiro->grid[i][j].aberto) abertas++;
         }
     }
