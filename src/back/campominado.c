@@ -221,24 +221,8 @@ void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
 
     Celula *celula = &tabuleiro->grid[x][y];
 
-        if(celula->aberto){
-            int cont2 = bandeiras_perto(tabuleiro, x, y);
-            int cont = cobertos_perto(tabuleiro, x, y);
-            if(cont2 == celula->bombas && cont > cont2){
-                if(!(celula->cima->aberto)) Revelar_celulas(tabuleiro, x - 1, y);
-                if(!(celula->dcesq->aberto)) Revelar_celulas(tabuleiro, x - 1, y - 1);
-                if(!(celula->dcdir->aberto)) Revelar_celulas(tabuleiro, x - 1, y + 1);
-                if(!(celula->baixo->aberto)) Revelar_celulas(tabuleiro, x + 1, y);
-                if(!(celula->dbesq->aberto)) Revelar_celulas(tabuleiro, x + 1, y - 1);
-                if(!(celula->dbdir->aberto)) Revelar_celulas(tabuleiro, x + 1, y + 1);
-                if(!(celula->esq->aberto)) Revelar_celulas(tabuleiro, x, y - 1);
-                if(!(celula->dir->aberto)) Revelar_celulas(tabuleiro, x, y + 1);
-            }
-            return;
-        }
     
-    // Retorna se for uma bomba ou se tiver bandeira 
-    if (celula->bandeira||celula->bomba) {
+    if (celula->aberto||celula->bomba) {
         return;
     }
 
@@ -322,6 +306,7 @@ bool Jogador_perdeu (Tabuleiro *tabuleiro, int x, int y) {
         return true;
     }
     return false;
+    
 }
 
 void Mostrar_tabuleiro (Tabuleiro *tabuleiro) {
