@@ -5,12 +5,12 @@
 #include <conio.h>
 #include "campominado.h"
 
-void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
+void Dados_iniciais (int *largura, int *altura, int *num_bombas) {
     // declaração de variáveis: as variáveis auxiliares serão utilziadas pra não ficar mudando o valor dentro de main todo tempo
     int aux1, aux2, aux3;
     printf("Por favor, insira a altura desejada: (Min = 5, Max = 40)\n");
     scanf("%d", &aux1);
-    while (5 > aux1 > 40) {
+    while (5 > aux1 && aux1 > 40) {
         printf("Por favor, insira a altura desejada, agora respeitando os limites (Min = 5, Max = 40)\n");
     scanf("%d", &aux1);
     }
@@ -18,7 +18,7 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
     printf("Por favor, insira a largura desejada: (Min = 5, Max = 26)\n");
     scanf("%d", &aux2);
 
-    while (5 > aux2 > 26) {
+    while (5 > aux2 && aux2 > 26) {
         printf("Por favor, insira a largura desejada, agora respeitando os limites (Min = 5, Max = 26)\n");
     scanf("%d", &aux2);
     }
@@ -35,8 +35,8 @@ void Dados_iniciais (int *altura, int *largura, int *num_bombas) {
         scanf("%d", &aux3);
     }
     *num_bombas = aux3;
-    *altura = aux2; 
-    *largura = aux1;
+    *altura = aux1; 
+    *largura = aux2;
     printf("Numero de bombas: %d\nAltura = %d\nLargura = %d\n", *num_bombas, *altura, *largura);
 }
 
@@ -221,8 +221,24 @@ void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
 
     Celula *celula = &tabuleiro->grid[x][y];
 
-    // Retorna se já estiver aberta ou se for uma bomba
-    if (celula->aberto || celula->bomba) {
+        if(celula->aberto){
+            int cont2 = bandeiras_perto(tabuleiro, x, y);
+            int cont = cobertos_perto(tabuleiro, x, y);
+            if(cont2 == celula->bombas && cont > cont2){
+                if(!(celula->cima->aberto)) Revelar_celulas(tabuleiro, x - 1, y);
+                if(!(celula->dcesq->aberto)) Revelar_celulas(tabuleiro, x - 1, y - 1);
+                if(!(celula->dcdir->aberto)) Revelar_celulas(tabuleiro, x - 1, y + 1);
+                if(!(celula->baixo->aberto)) Revelar_celulas(tabuleiro, x + 1, y);
+                if(!(celula->dbesq->aberto)) Revelar_celulas(tabuleiro, x + 1, y - 1);
+                if(!(celula->dbdir->aberto)) Revelar_celulas(tabuleiro, x + 1, y + 1);
+                if(!(celula->esq->aberto)) Revelar_celulas(tabuleiro, x, y - 1);
+                if(!(celula->dir->aberto)) Revelar_celulas(tabuleiro, x, y + 1);
+            }
+            return;
+        }
+    
+    // Retorna se for uma bomba ou se tiver bandeira 
+    if (celula->bandeira||celula->bomba) {
         return;
     }
 
@@ -249,9 +265,11 @@ void Dica(Tabuleiro *tabuleiro){
             Celula *celula = &tabuleiro->grid[i][j];
 
             if((celula->aberto)){
-                int cont = cobertos_perto(tabuleiro, i ,j);
                 //se o numero de cobertos perto e de bombas for igual todos tem bomba. ent ele coloca bandeira
-                if(cont == celula->bombas){
+                int cont2 = bandeiras_perto(tabuleiro, i, j);
+                int cont = cobertos_perto(tabuleiro, i ,j);
+
+                if(cont == celula->bombas && cont > cont2){
                     if(!(celula->dcesq->bandeira))
                         bandeira(tabuleiro, i - 1, j - 1);
                     if(!(celula->esq->bandeira))
@@ -267,17 +285,17 @@ void Dica(Tabuleiro *tabuleiro){
                     if(!(celula->dir->bandeira))  
                         bandeira(tabuleiro, i, j + 1);  
                     if(!(celula->dbdir->bandeira))    
-                        bandeira(tabuleiro, i + 1, j + 1);    
+                        bandeira(tabuleiro, i + 1, j + 1);
+                    return;   
                 }
                 else{
                     //se o numero de bandeiras e bombas ao redor é igual ent as celulas restantes são clicadas (o programa assume que as bandeiras posicionadas estão corretas )
-                    int cont2 = bandeiras_perto(tabuleiro, i, j);
                     if(cont2 == celula->bombas && cont > cont2){
                         Revelar_celulas(tabuleiro, i, j);
+                    return;
                     }
                 }
-                //assim q o programa realizar a primeira dica ele para
-                return;
+                //assim q o programa realizar a primeira dica ele para 
             }
         }
     }

@@ -35,7 +35,7 @@ void MenuPrincipal(Tabuleiro *tabuleiro) {
 
 void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
     Dados_iniciais(altura, largura, num_bombas);
-    Inicializando_Tabuleiro(tabuleiro, *largura, *altura, *num_bombas);
+    Inicializando_Tabuleiro(tabuleiro, *altura, *largura, *num_bombas);
     Bombas_Perto_Celula(tabuleiro);
 
     // Inicia o temporizador
