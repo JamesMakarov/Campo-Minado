@@ -308,7 +308,7 @@ void Dica(Tabuleiro *tabuleiro) {
                 int cobertos = cobertos_perto(tabuleiro, i, j);
 
                 // Se todos os vizinhos cobertos devem ser bombas, coloca bandeira em cada um que ainda não tem
-                if (cobertos == celula->bombas) {
+                if (cobertos == celula->bombas && celula->bombas != bandeiras_perto(tabuleiro, i, j)) {
                     if (i - 1 >= 0 && j - 1 >= 0)
                         colocarBandeira(tabuleiro, i - 1, j - 1);
                     if (i - 1 >= 0)
