@@ -39,6 +39,7 @@ void MenuPrincipal(Tabuleiro *tabuleiro) {
 }
 
 void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
+    int cont = 0;
     Dados_iniciais(altura, largura, num_bombas);
     Inicializando_Tabuleiro(tabuleiro, *altura, *largura, *num_bombas);
     Bombas_Perto_Celula(tabuleiro);
@@ -53,7 +54,12 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
     while (jogo_ativo) {
         
         Exibir_Tabuleiro(tabuleiro, *altura, *largura);
+        if (cont == 0){
+            limpar_buffer_interface();
+            cont = 1;
+        }
         Pegar_Jogada(tabuleiro, &x, &y, &acao);
+
 
         if (acao == 'A') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
@@ -229,7 +235,7 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
 
         /* Verifica se o usuário pressionou apenas "Enter" */
         if (strcmp(entrada, "\n") == 0) {
-            Dica(tabuleiro);  // Chama a função Dica
+            Dica(tabuleiro);  // Chama a função Dica 
             return;
         }
 

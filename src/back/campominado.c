@@ -309,22 +309,46 @@ void Dica(Tabuleiro *tabuleiro) {
 
                 // Se todos os vizinhos cobertos devem ser bombas, coloca bandeira em cada um que ainda não tem
                 if (cobertos == celula->bombas && celula->bombas != bandeiras_perto(tabuleiro, i, j)) {
-                    if (i - 1 >= 0 && j - 1 >= 0)
-                        colocarBandeira(tabuleiro, i - 1, j - 1);
-                    if (i - 1 >= 0)
-                        colocarBandeira(tabuleiro, i - 1, j);
-                    if (i - 1 >= 0 && j + 1 < tabuleiro->largura)
-                        colocarBandeira(tabuleiro, i - 1, j + 1);
-                    if (j - 1 >= 0)
-                        colocarBandeira(tabuleiro, i, j - 1);
-                    if (j + 1 < tabuleiro->largura)
-                        colocarBandeira(tabuleiro, i, j + 1);
-                    if (i + 1 < tabuleiro->altura && j - 1 >= 0)
-                        colocarBandeira(tabuleiro, i + 1, j - 1);
-                    if (i + 1 < tabuleiro->altura)
-                        colocarBandeira(tabuleiro, i + 1, j);
-                    if (i + 1 < tabuleiro->altura && j + 1 < tabuleiro->largura)
-                        colocarBandeira(tabuleiro, i + 1, j + 1);
+                    if (i - 1 >= 0 && j - 1 >= 0){
+                        if(!celula->dcesq->bandeira){
+                            colocarBandeira(tabuleiro, i - 1, j - 1);
+                        }
+                    }
+                    if (i - 1 >= 0){
+                        if(!celula->cima->bandeira){
+                            colocarBandeira(tabuleiro, i - 1, j);
+                        }
+                    }
+                    if (i - 1 >= 0 && j + 1 < tabuleiro->largura){
+                        if(!celula->dcdir->bandeira){
+                            colocarBandeira(tabuleiro, i - 1, j + 1);
+                        }
+                    }
+                    if (j - 1 >= 0){
+                        if(!celula->esq->bandeira){
+                            colocarBandeira(tabuleiro, i, j - 1);
+                        }
+                    }
+                    if (j + 1 < tabuleiro->largura){
+                        if(!celula->dir->bandeira){
+                            colocarBandeira(tabuleiro, i, j + 1);
+                        }
+                    }
+                    if (i + 1 < tabuleiro->altura && j - 1 >= 0){
+                        if(!celula->dbesq->bandeira){
+                            colocarBandeira(tabuleiro, i + 1, j - 1);
+                        }
+                    }
+                    if (i + 1 < tabuleiro->altura){
+                        if(!celula->baixo->bandeira){
+                            colocarBandeira(tabuleiro, i + 1, j);
+                        }
+                    }
+                    if (i + 1 < tabuleiro->altura && j + 1 < tabuleiro->largura){
+                        if(!celula->dbdir->bandeira){
+                            colocarBandeira(tabuleiro, i + 1, j + 1);
+                        }
+                    }
                     
                     celula->dica_aplicada = true;
                     movimento_executado = true;
@@ -344,7 +368,7 @@ void Dica(Tabuleiro *tabuleiro) {
     }
     
     if (!movimento_executado) {
-        printf("Nao foi possivel dar uma dica deterministica para o jogo atual.\n");
+        printf("Nao foi possivel dar uma dica para o jogo atual. E possivel que a proxima jogada dependa de sorte.\n");
     }
 }
 

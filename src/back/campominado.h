@@ -27,6 +27,7 @@ void Bombas_Perto_Celula(Tabuleiro *tabuleiro);
 void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y);
 void Dica(Tabuleiro *tabuleiro);
 void bandeira(Tabuleiro *tabuleiro, int x, int y);
+void colocarBandeira(Tabuleiro *tabuleiro, int x, int y);
 int cobertos_perto(Tabuleiro *tabuleiro , int x, int y);
 int bandeiras_perto(Tabuleiro *tabuleiro , int x, int y);
 bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais);
