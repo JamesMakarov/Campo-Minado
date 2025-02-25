@@ -286,91 +286,73 @@ void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
 
 
 void colocarBandeira(Tabuleiro *tabuleiro, int x, int y) {
-    if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura)
+    if (y < 0 || y >= tabuleiro->altura || x < 0 || x >= tabuleiro->largura)  
         return;
-    Celula *cel = &tabuleiro->grid[x][y];
-    if (!cel->aberto && !cel->bandeira) {
-        cel->bandeira = true;
+
+    Celula *cel = &tabuleiro->grid[y][x]; // Correção: acessar corretamente a célula
+
+    if (!cel->aberto) {  
+        cel->bandeira = !cel->bandeira;  // Alterna a bandeira apenas se a célula não estiver aberta
     }
 }
 
+
 void Dica(Tabuleiro *tabuleiro) {
     bool movimento_executado = false;
-    
-    // Percorre o tabuleiro (i: linhas, j: colunas)
+
     for (int i = 0; i < tabuleiro->altura && !movimento_executado; i++) {
         for (int j = 0; j < tabuleiro->largura && !movimento_executado; j++) {
-
             Celula *celula = &tabuleiro->grid[i][j];
 
-            // Processa células abertas, com bomb count diferente de zero e que ainda não receberam dica
             if (celula->aberto && celula->bombas != 0 && !celula->dica_aplicada) {
                 int cobertos = cobertos_perto(tabuleiro, i, j);
+                int bandeiras = bandeiras_perto(tabuleiro, i, j);
 
-                // Se todos os vizinhos cobertos devem ser bombas, coloca bandeira em cada um que ainda não tem
-                if (cobertos == celula->bombas && celula->bombas != bandeiras_perto(tabuleiro, i, j)) {
-                    if (i - 1 >= 0 && j - 1 >= 0){
-                        if(!celula->dcesq->bandeira){
-                            colocarBandeira(tabuleiro, i - 1, j - 1);
+                if (cobertos == celula->bombas && bandeiras < celula->bombas) {
+                    // Adiciona bandeira onde ainda não tem
+                    for (int dy = -1; dy <= 1; dy++) {
+                        for (int dx = -1; dx <= 1; dx++) {
+                            int ny = i + dy, nx = j + dx;
+                            if (ny >= 0 && ny < tabuleiro->altura && nx >= 0 && nx < tabuleiro->largura) {
+                                Celula *vizinho = &tabuleiro->grid[ny][nx];
+                                if (!vizinho->aberto && !vizinho->bandeira) {
+                                    vizinho->bandeira = true;  // Marca bandeira diretamente
+                                    movimento_executado = true;
+                                    break;
+                                }
+                            }
                         }
+                        if (movimento_executado) break;
                     }
-                    if (i - 1 >= 0){
-                        if(!celula->cima->bandeira){
-                            colocarBandeira(tabuleiro, i - 1, j);
-                        }
-                    }
-                    if (i - 1 >= 0 && j + 1 < tabuleiro->largura){
-                        if(!celula->dcdir->bandeira){
-                            colocarBandeira(tabuleiro, i - 1, j + 1);
-                        }
-                    }
-                    if (j - 1 >= 0){
-                        if(!celula->esq->bandeira){
-                            colocarBandeira(tabuleiro, i, j - 1);
-                        }
-                    }
-                    if (j + 1 < tabuleiro->largura){
-                        if(!celula->dir->bandeira){
-                            colocarBandeira(tabuleiro, i, j + 1);
-                        }
-                    }
-                    if (i + 1 < tabuleiro->altura && j - 1 >= 0){
-                        if(!celula->dbesq->bandeira){
-                            colocarBandeira(tabuleiro, i + 1, j - 1);
-                        }
-                    }
-                    if (i + 1 < tabuleiro->altura){
-                        if(!celula->baixo->bandeira){
-                            colocarBandeira(tabuleiro, i + 1, j);
-                        }
-                    }
-                    if (i + 1 < tabuleiro->altura && j + 1 < tabuleiro->largura){
-                        if(!celula->dbdir->bandeira){
-                            colocarBandeira(tabuleiro, i + 1, j + 1);
-                        }
-                    }
-                    
                     celula->dica_aplicada = true;
-                    movimento_executado = true;
-                }
-                else {
-                    // Se o número de bandeiras já marcadas for igual ao número de bombas
-                    // e ainda houver vizinhos cobertos, revela os vizinhos.
-                    int bandeiras = bandeiras_perto(tabuleiro, i, j);
-                    if (bandeiras == celula->bombas && cobertos > bandeiras) {
-                        Revelar_celulas(tabuleiro, i, j);
-                        celula->dica_aplicada = true;
-                        movimento_executado = true;
+                } 
+                else if (bandeiras == celula->bombas && cobertos > bandeiras) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        for (int dx = -1; dx <= 1; dx++) {
+                            int ny = i + dy, nx = j + dx;
+                            if (ny >= 0 && ny < tabuleiro->altura && nx >= 0 && nx < tabuleiro->largura) {
+                                Celula *vizinho = &tabuleiro->grid[ny][nx];
+                                if (!vizinho->aberto && !vizinho->bandeira) {
+                                    Revelar_celulas(tabuleiro, ny, nx);
+                                    movimento_executado = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (movimento_executado) break;
                     }
+                    celula->dica_aplicada = true;
                 }
             }
         }
     }
-    
+
     if (!movimento_executado) {
         printf("Nao foi possivel dar uma dica para o jogo atual. E possivel que a proxima jogada dependa de sorte.\n");
     }
 }
+
+
 
 
 bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
@@ -384,6 +366,9 @@ bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
     }
     return (abertas == total_celulas - bombas_totais);
 }
+
+
+
 
 bool Jogador_perdeu (Tabuleiro *tabuleiro, int x, int y) {
     Celula *celula = &tabuleiro->grid[x][y];

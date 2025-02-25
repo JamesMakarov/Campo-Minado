@@ -52,7 +52,6 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
     bool jogo_ativo = true;
 
     while (jogo_ativo) {
-        
         Exibir_Tabuleiro(tabuleiro, *altura, *largura);
         if (cont == 0){
             limpar_buffer_interface();
@@ -60,6 +59,7 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
         }
         Pegar_Jogada(tabuleiro, &x, &y, &acao);
 
+        bool tabuleiro_alterado = false; // Flag para saber se algo mudou
 
         if (acao == 'A') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
@@ -68,30 +68,14 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
             }
 
             Revelar_celulas(tabuleiro, y, x);
+            tabuleiro_alterado = true;  // Alteração feita no tabuleiro
+
             if (Jogador_perdeu(tabuleiro, y, x)) {
-                
                 Mostrar_tabuleiro(tabuleiro);
                 Exibir_Tabuleiro(tabuleiro, *largura, *altura);
                 printf("\033[0;31m");
                 printf("   +================================+\n");
                 printf("   ||         Voce perdeu!         ||\n");
-                printf("   +================================+\n");
-                printf("\033[0m");
-                jogo_ativo = false;
-
-                // Calcula o tempo decorrido
-                time_t end_time = time(NULL);
-                double elapsed_time = difftime(end_time, start_time);
-
-                // Chama o menu pós-jogo e passa o tempo decorrido
-                MenuPosJogo(tabuleiro, altura, largura, num_bombas, elapsed_time);
-            } else if (Jogador_venceu(tabuleiro, *num_bombas)) {
-                
-                Mostrar_tabuleiro(tabuleiro);
-                Exibir_Tabuleiro(tabuleiro, *largura, *altura);
-                printf("\033[0;32m");
-                printf("   +================================+\n");
-                printf("   ||     Parabens! Voce venceu!   ||\n");
                 printf("   +================================+\n");
                 printf("\033[0m");
                 jogo_ativo = false;
@@ -108,18 +92,43 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
                 printf("\nCoordenada invalida! Tente novamente.\n");
                 continue;
             }
-            bandeira(tabuleiro, x, y);  // Marcar bandeira
+            colocarBandeira(tabuleiro, x, y);
+            tabuleiro_alterado = true;  // Alteração feita no tabuleiro
         } else if (acao == '!') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
                 printf("\nCoordenada invalida! Tente novamente.\n");
                 continue;
             }
-            bandeira(tabuleiro, x, y);  // Desmarcar bandeira
+            colocarBandeira(tabuleiro, x, y);
+            tabuleiro_alterado = true;  // Alteração feita no tabuleiro
+        } else if (acao == '\n') {  // Usuário pediu Dica
+            Dica(tabuleiro);
+            tabuleiro_alterado = true;  // Alteração feita no tabuleiro
         } else {
             printf("\nAcao invalida! Tente novamente.\n");
         }
+
+        // **Se algo mudou no tabuleiro, verificar vitória**
+        if (tabuleiro_alterado && Jogador_venceu(tabuleiro, *num_bombas)) {
+            Mostrar_tabuleiro(tabuleiro);
+            Exibir_Tabuleiro(tabuleiro, *largura, *altura);
+            printf("\033[0;32m");
+            printf("   +================================+\n");
+            printf("   ||     Parabens! Voce venceu!   ||\n");
+            printf("   +================================+\n");
+            printf("\033[0m");
+            jogo_ativo = false;
+
+            // Calcula o tempo decorrido
+            time_t end_time = time(NULL);
+            double elapsed_time = difftime(end_time, start_time);
+
+            // Chama o menu pós-jogo e passa o tempo decorrido
+            MenuPosJogo(tabuleiro, altura, largura, num_bombas, elapsed_time);
+        }
     }
 }
+
 
 void opcoes(Tabuleiro *tabuleiro, short int opcao) {
     switch (opcao) {
