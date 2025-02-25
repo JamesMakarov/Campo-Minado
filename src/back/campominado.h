@@ -35,5 +35,6 @@ void Mostrar_tabuleiro (Tabuleiro *tabuleiro);
 void Dados_iniciais (int *altura, int *largura, int *num_bombas);
 bool Jogador_perdeu(Tabuleiro *tabuleiro, int x, int y);
 int ContarBandeiras(Tabuleiro *tabuleiro);
-
+void ucoloca_bandeira(Tabuleiro *tabuleiro ,int y, int x);
+void utira_bandeira(Tabuleiro *tabuleiro ,int y, int x);
 #endif

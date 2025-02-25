@@ -92,14 +92,14 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
                 printf("\nCoordenada invalida! Tente novamente.\n");
                 continue;
             }
-            colocarBandeira(tabuleiro, x, y);
+            ucoloca_bandeira(tabuleiro, x, y);
             tabuleiro_alterado = true;  // Alteração feita no tabuleiro
         } else if (acao == '!') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
                 printf("\nCoordenada invalida! Tente novamente.\n");
                 continue;
             }
-            colocarBandeira(tabuleiro, x, y);
+            utira_bandeira(tabuleiro, x, y);
             tabuleiro_alterado = true;  // Alteração feita no tabuleiro
         } else if (acao == '\n') {  // Usuário pediu Dica
             Dica(tabuleiro);

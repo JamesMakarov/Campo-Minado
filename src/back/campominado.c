@@ -401,3 +401,21 @@ int ContarBandeiras(Tabuleiro *tabuleiro) {
     return contador;
 }
 
+void ucoloca_bandeira(Tabuleiro *tabuleiro ,int y, int x){
+    if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura || tabuleiro->grid[x][y].aberto) {
+        return; 
+    }
+    
+    Celula *celula = &tabuleiro->grid[x][y];
+    //se não houver bandeira ele coloca e se já houver ele tira
+celula->bandeira = true;
+}
+void utira_bandeira(Tabuleiro *tabuleiro ,int y, int x){
+    if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura || tabuleiro->grid[x][y].aberto) {
+        return; 
+    }
+    
+    Celula *celula = &tabuleiro->grid[x][y];
+    //se não houver bandeira ele coloca e se já houver ele tira
+celula->bandeira = false;
+}
