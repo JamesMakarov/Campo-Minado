@@ -4,7 +4,7 @@
 
 typedef struct Celula {
 
-    bool aberto, bandeira, bomba;
+    bool aberto, bandeira, bomba, dica_aplicada;
     short int bombas, cobertos; 
     int x ,y;
     struct Celula *cima, *baixo, *esq, *dir, *dcesq, *dcdir, *dbesq, *dbdir;

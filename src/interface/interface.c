@@ -15,9 +15,9 @@ void MenuPrincipal(Tabuleiro *tabuleiro) {
     system("cls");  /*Limpa a tela no Windows*/
     printf("\033[0;33m"); // cor amarela no terminal
     printf("\n\n");
-    printf("   ==================================\n");
-    printf("             CAMPO MINADO            \n");
-    printf("   ==================================\n");
+    printf("   +================================+\n");
+    printf("   ||         CAMPO MINADO         ||\n");
+    printf("   +================================+\n");
     printf("\n");
     
     printf("           1 - Iniciar Jogo         \n");
@@ -57,9 +57,14 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
 
             Revelar_celulas(tabuleiro, y, x);
             if (Jogador_perdeu(tabuleiro, y, x)) {
-                printf("Você acertou uma mina! Fim de jogo.\n");
+                
                 Mostrar_tabuleiro(tabuleiro);
                 Exibir_Tabuleiro(tabuleiro, *largura, *altura);
+                printf("\033[0;31m");
+                printf("   +================================+\n");
+                printf("   ||         Voce perdeu!         ||\n");
+                printf("   +================================+\n");
+                printf("\033[0m");
                 jogo_ativo = false;
 
                 // Calcula o tempo decorrido
@@ -69,9 +74,14 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
                 // Chama o menu pós-jogo e passa o tempo decorrido
                 MenuPosJogo(tabuleiro, altura, largura, num_bombas, elapsed_time);
             } else if (Jogador_venceu(tabuleiro, *num_bombas)) {
-                printf("Parabens! Voce venceu!\n");
+                
                 Mostrar_tabuleiro(tabuleiro);
                 Exibir_Tabuleiro(tabuleiro, *largura, *altura);
+                printf("\033[0;32m");
+                printf("   +================================+\n");
+                printf("   ||     Parabens! Voce venceu!   ||\n");
+                printf("   +================================+\n");
+                printf("\033[0m");
                 jogo_ativo = false;
 
                 // Calcula o tempo decorrido
@@ -102,17 +112,21 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
 void opcoes(Tabuleiro *tabuleiro, short int opcao) {
     switch (opcao) {
         case 1:
-            printf("Iniciando o jogo...\n");
+        printf("\n\n");
             int altura, largura, num_bombas;
             Start(tabuleiro, &altura, &largura, &num_bombas);
             break;
         case 2:
-            printf("Exibindo as regras...\n");
+            printf("\n");
             if (Regras()) Start(tabuleiro, &altura, &largura, &num_bombas); // inicia jogo
             else MenuPrincipal(tabuleiro);
             break;
         case 3:
-            printf("Saindo... Obrigado por jogar!\n");
+        printf("\033[0;36m");
+        printf("   +================================+\n");
+        printf("   ||       Obriago por jogar!     ||\n");
+        printf("   +================================+\n");
+        printf("\033[0m");
             break;
         default:
             printf("Opcao invalida!\n");
@@ -124,7 +138,7 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura) {
     int bandeiras_marcadas = ContarBandeiras(tabuleiro);
     /*Para exibir números das colunas (alinhados verticalmente)*/
     printf("\033[0;33m");
-    printf("Bandeiras marcadas: %d\n", bandeiras_marcadas);
+    printf("\nBandeiras marcadas: %d\n", bandeiras_marcadas);
     printf("     ");  /*Espaço para alinhar com as letras das linhas*/
     for (int i = 0; i < tabuleiro->altura; i++) { 
         int var = (i + 1)/10;
@@ -205,11 +219,18 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
     while (!entrada_valida) {
         printf("# - Marcar bandeira.\n! - Desmarca bandeira.\nEnter - Pedir uma dica.\n");
         printf("Digite sua jogada (ex: A15, #B7, !C3): ");
-        scanf("%s", entrada);
+        fgets(entrada, sizeof(entrada), stdin);  // Usar fgets para capturar a entrada completa, inclusive '\n'
+
+        /* Verifica se o usuário pressionou apenas "Enter" */
+        if (strcmp(entrada, "\n") == 0) {
+            printf("Chamando dica");
+            Dica(tabuleiro);  // Chama a função Dica
+            return;
+        }
 
         /* Verifica se a entrada tem pelo menos 2 caracteres */
         if (strlen(entrada) < 2) {
-            printf("Entrada invalida! Tente novamente.\n");
+            printf("Digite uma jogada válida.\n");
             continue;
         }
 
@@ -234,7 +255,7 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
         if (*x >= 0 && *x < tabuleiro->largura && *y >= 0 && *y < tabuleiro->altura) {
             entrada_valida = true;
         } else {
-            printf("Coordenada invalida! Tente novamente.\n");
+            printf("Coordenada inválida! Tente novamente.\n");
         }
     }
 }

@@ -54,7 +54,7 @@ Celula* CriarNova(int x, int y) {
         printf("Erro ao alocar memória para célula.\n");
         exit(1);
     }
-    nova->aberto = nova->bandeira = nova->bomba = false;
+    nova->aberto = nova->bandeira = nova->bomba = nova->dica_aplicada = false;
     nova->bombas = 0;
     nova->x = x;
     nova->y = y;
@@ -285,50 +285,69 @@ void Revelar_celulas(Tabuleiro *tabuleiro, int x, int y) {
 }
 
 
-void Dica(Tabuleiro *tabuleiro){
-    //percorre ate achar uma célula aberta em que a dica pode ser aplicada 
-    for (int i = 0; i < tabuleiro->largura; i++) {
-        for (int j = 0; j < tabuleiro->altura; j++){
+void colocarBandeira(Tabuleiro *tabuleiro, int x, int y) {
+    if (x < 0 || x >= tabuleiro->altura || y < 0 || y >= tabuleiro->largura)
+        return;
+    Celula *cel = &tabuleiro->grid[x][y];
+    if (!cel->aberto && !cel->bandeira) {
+        cel->bandeira = true;
+    }
+}
+
+void Dica(Tabuleiro *tabuleiro) {
+    bool movimento_executado = false;
+    
+    // Percorre o tabuleiro (i: linhas, j: colunas)
+    for (int i = 0; i < tabuleiro->altura && !movimento_executado; i++) {
+        for (int j = 0; j < tabuleiro->largura && !movimento_executado; j++) {
 
             Celula *celula = &tabuleiro->grid[i][j];
 
-            if((celula->aberto)){
-                int cont = cobertos_perto(tabuleiro, i ,j);
-                //se o numero de cobertos perto e de bombas for igual todos tem bomba. ent ele coloca bandeira
-                if(cont == celula->bombas){
-                    if(!(celula->dcesq->bandeira))
-                        bandeira(tabuleiro, i - 1, j - 1);
-                    if(!(celula->esq->bandeira))
-                        bandeira(tabuleiro, i, j - 1);
-                    if(!(celula->dbesq->bandeira))   
-                        bandeira(tabuleiro, i + 1, j - 1);
-                    if(!(celula->cima->bandeira))  
-                        bandeira(tabuleiro, i - 1, j); 
-                    if(!(celula->baixo->bandeira))    
-                        bandeira(tabuleiro, i + 1, j);   
-                    if(!(celula->dcdir->bandeira)) 
-                        bandeira(tabuleiro, i - 1, j + 1);
-                    if(!(celula->dir->bandeira))  
-                        bandeira(tabuleiro, i, j + 1);  
-                    if(!(celula->dbdir->bandeira))    
-                        bandeira(tabuleiro, i + 1, j + 1);    
+            // Processa células abertas, com bomb count diferente de zero e que ainda não receberam dica
+            if (celula->aberto && celula->bombas != 0 && !celula->dica_aplicada) {
+                int cobertos = cobertos_perto(tabuleiro, i, j);
+
+                // Se todos os vizinhos cobertos devem ser bombas, coloca bandeira em cada um que ainda não tem
+                if (cobertos == celula->bombas) {
+                    if (i - 1 >= 0 && j - 1 >= 0)
+                        colocarBandeira(tabuleiro, i - 1, j - 1);
+                    if (i - 1 >= 0)
+                        colocarBandeira(tabuleiro, i - 1, j);
+                    if (i - 1 >= 0 && j + 1 < tabuleiro->largura)
+                        colocarBandeira(tabuleiro, i - 1, j + 1);
+                    if (j - 1 >= 0)
+                        colocarBandeira(tabuleiro, i, j - 1);
+                    if (j + 1 < tabuleiro->largura)
+                        colocarBandeira(tabuleiro, i, j + 1);
+                    if (i + 1 < tabuleiro->altura && j - 1 >= 0)
+                        colocarBandeira(tabuleiro, i + 1, j - 1);
+                    if (i + 1 < tabuleiro->altura)
+                        colocarBandeira(tabuleiro, i + 1, j);
+                    if (i + 1 < tabuleiro->altura && j + 1 < tabuleiro->largura)
+                        colocarBandeira(tabuleiro, i + 1, j + 1);
+                    
+                    celula->dica_aplicada = true;
+                    movimento_executado = true;
                 }
-                else{
-                    //se o numero de bandeiras e bombas ao redor é igual ent as celulas restantes são clicadas (o programa assume que as bandeiras posicionadas estão corretas )
-                    int cont2 = bandeiras_perto(tabuleiro, i, j);
-                    if(cont2 == celula->bombas && cont > cont2){
+                else {
+                    // Se o número de bandeiras já marcadas for igual ao número de bombas
+                    // e ainda houver vizinhos cobertos, revela os vizinhos.
+                    int bandeiras = bandeiras_perto(tabuleiro, i, j);
+                    if (bandeiras == celula->bombas && cobertos > bandeiras) {
                         Revelar_celulas(tabuleiro, i, j);
+                        celula->dica_aplicada = true;
+                        movimento_executado = true;
                     }
                 }
-                //assim q o programa realizar a primeira dica ele para
-                return;
             }
         }
     }
-    //se não encontrar nenhuma célula em que possa aplicar a dica 
-    printf("não foi possível dar uma dica para o jogo atual, é possível que a jogada a seguir dependa de sorte.");
-    return;
+    
+    if (!movimento_executado) {
+        printf("Nao foi possivel dar uma dica deterministica para o jogo atual.\n");
+    }
 }
+
 
 bool Jogador_venceu(Tabuleiro *tabuleiro, int bombas_totais) {
     int abertas = 0;
