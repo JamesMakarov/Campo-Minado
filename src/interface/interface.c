@@ -9,6 +9,11 @@
 #include "interface.h"
 #include "../back/campominado.h"
 
+void limpar_buffer_interface() {
+    // Limpa o buffer do stdin
+    while(getchar() != '\n');
+}
+
 void MenuPrincipal(Tabuleiro *tabuleiro) {
     short int opcao = 0;
     system("clear"); /*Limpa a tela no Linux(para quando o Miguel GOAT for corrigir )*/
@@ -46,12 +51,13 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
     bool jogo_ativo = true;
 
     while (jogo_ativo) {
+        
         Exibir_Tabuleiro(tabuleiro, *altura, *largura);
         Pegar_Jogada(tabuleiro, &x, &y, &acao);
 
         if (acao == 'A') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
-                printf("Coordenada invalida! Tente novamente.\n");
+                printf("\nCoordenada invalida! Tente novamente.\n");
                 continue;
             }
 
@@ -93,18 +99,18 @@ void Start(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas) {
             }
         } else if (acao == '#') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
-                printf("Coordenada invalida! Tente novamente.\n");
+                printf("\nCoordenada invalida! Tente novamente.\n");
                 continue;
             }
             bandeira(tabuleiro, x, y);  // Marcar bandeira
         } else if (acao == '!') {
             if (x < 0 || x >= tabuleiro->largura || y < 0 || y >= tabuleiro->altura) {
-                printf("Coordenada invalida! Tente novamente.\n");
+                printf("\nCoordenada invalida! Tente novamente.\n");
                 continue;
             }
             bandeira(tabuleiro, x, y);  // Desmarcar bandeira
         } else {
-            printf("Acao invalida! Tente novamente.\n");
+            printf("\nAcao invalida! Tente novamente.\n");
         }
     }
 }
@@ -124,12 +130,12 @@ void opcoes(Tabuleiro *tabuleiro, short int opcao) {
         case 3:
         printf("\033[0;36m");
         printf("   +================================+\n");
-        printf("   ||       Obriago por jogar!     ||\n");
+        printf("   ||       Obrigado por jogar!    ||\n");
         printf("   +================================+\n");
         printf("\033[0m");
             break;
         default:
-            printf("Opcao invalida!\n");
+            printf("\nOpcao invalida!\n");
             break;
         }
 }
@@ -177,7 +183,7 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura) {
             } else if (celula->bandeira) {
                 printf(" \033[0;33m\033[41m ! \033[0m ");  // Exibe bandeira
             } else {
-                printf(" \033[47m\033[32m   \033[0m ");  // Exibe célula fechada
+                printf(" \033[46m\033[32m   \033[0m ");  // Exibe célula fechada
             }
         }
         printf("\n");  // Quebra de linha após cada linha do tabuleiro
@@ -191,19 +197,19 @@ bool Regras() {
     system("cls");  
     printf("\033[0;33m"); /*Aqui é pra cor continuar igual ao do menu.*/
     printf("\n\n");
-    printf("   ==================================\n");
-    printf("             REGRAS DO JOGO          \n");
-    printf("   ==================================\n");
+    printf("   +================================+\n");
+    printf("   ||         REGRAS DO JOGO       ||\n");
+    printf("   +================================+\n");
     printf("\n");
-    printf("1 - Objetivo: Abrir todas as celulas seguras do tabuleiro sem escolher a coordenada de uma mina.\n\n");
-    printf("2 - Tabuleiro: Consiste em uma grade com celulas ocultas, algumas contendo minas e outras vazias ou com numeros.\n\n");
-    printf("3 - Numeros: Ao escolher a coordenada de uma celula vazia, um numero pode aparecer indicando quantas minas estao nas celulas adjacentes.\n\n");
-    printf("4 - Marcacao de Minas: O jogador pode marcar celulas suspeitas com bandeiras para indicar possiveis minas.\n\n");
-    printf("5 - Explosao: Se o jogador escolher a coordenada de uma celula com mina, o jogo termina imediatamente com derrota.\n\n");
-    printf("6 - Abertura Automatica: Se uma celula sem mina e sem numeros for aberta, as celulas vizinhas tambem sao reveladas automaticamente ate encontrar numeros.\n\n");
-    printf("7 - Vitoria: O jogo eh vencido quando todas as celulas seguras forem reveladas e todas as minas estiverem corretamente marcadas.\n\n");
+    printf("   1 - Objetivo: Abrir todas as celulas seguras do tabuleiro sem escolher a coordenada de uma mina.\n\n");
+    printf("   2 - Tabuleiro: Consiste em uma grade com celulas ocultas, algumas contendo minas e outras vazias ou com numeros.\n\n");
+    printf("   3 - Numeros: Ao escolher a coordenada de uma celula vazia, um numero pode aparecer indicando quantas minas estao nas celulas adjacentes.\n\n");
+    printf("   4 - Marcacao de Minas: O jogador pode marcar celulas suspeitas com bandeiras para indicar possiveis minas.\n\n");
+    printf("   5 - Explosao: Se o jogador escolher a coordenada de uma celula com mina, o jogo termina imediatamente com derrota.\n\n");
+    printf("   6 - Abertura Automatica: Se uma celula sem mina e sem numeros for aberta, as celulas vizinhas tambem sao reveladas automaticamente ate encontrar numeros.\n\n");
+    printf("   7 - Vitoria: O jogo eh vencido quando todas as celulas seguras forem reveladas e todas as minas estiverem corretamente marcadas.\n\n");
     printf("\033[0m"); /*Retorna para a cor do terminal*/
-    printf("Essas sao as regras, pronto? Digite qualquer coisa no terminal e aperte Enter.\n");
+    printf("   Essas sao as regras, pronto? Digite qualquer coisa no terminal e dê Enter para iniciar o jogo, senão aperte apenas Enter\n");
     getchar();
     scanf("%c", &pronto);
     if (pronto != '\n') {
@@ -223,14 +229,13 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
 
         /* Verifica se o usuário pressionou apenas "Enter" */
         if (strcmp(entrada, "\n") == 0) {
-            printf("Chamando dica");
             Dica(tabuleiro);  // Chama a função Dica
             return;
         }
 
         /* Verifica se a entrada tem pelo menos 2 caracteres */
         if (strlen(entrada) < 2) {
-            printf("Digite uma jogada válida.\n");
+            printf("\nDigite uma jogada válida.\n");
             continue;
         }
 
@@ -247,7 +252,7 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
 
         /* Verifica se a conversão falhou (ptr == &entrada[1] indica erro) */
         if (ptr == &entrada[1] || *y < 0) {
-            printf("Numero inválido! Tente novamente.\n");
+            printf("\nNumero inválido! Tente novamente.\n");
             continue;
         }
 
@@ -255,7 +260,7 @@ void Pegar_Jogada(Tabuleiro *tabuleiro, int *x, int *y, char *acao) {
         if (*x >= 0 && *x < tabuleiro->largura && *y >= 0 && *y < tabuleiro->altura) {
             entrada_valida = true;
         } else {
-            printf("Coordenada inválida! Tente novamente.\n");
+            printf("\nCoordenada inválida! Tente novamente.\n");
         }
     }
 }

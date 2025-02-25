@@ -14,5 +14,6 @@ void Reiniciar_Jogo(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bo
 void MenuPosJogo(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bombas, double tempo_decorrido);
 void IniciarTemporizador(time_t *inicio);
 int CalcularTempoDecorrido(time_t inicio);
+void limpar_buffer_interface();
 
 #endif
