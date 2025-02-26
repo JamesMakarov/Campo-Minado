@@ -10,5 +10,11 @@ Para execução do projeto.
 2. Mac/Linux:
     Pra compilar basta rodar o compilar.sh
 
-Participação de cada integrante:
+Participação de cada integrante majoritariamente:
+
+1. Samuel Dantas de Carvalho: Implementação da dica (parte que mais demandou tempo).
+2. Thiago Monteiro Nogueira: Responsável por implementar boa parte dos códigos na pasta back.
+3. Victor Nogueira de Souza: Responsável por implementar boa parte dos códigos na pasta interface.
+
+De modo geral, todos participaram de todas as áreas do código, principalmente na solução de erros.
 

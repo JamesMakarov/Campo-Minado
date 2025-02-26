@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <string.h> 
 #include <ctype.h> 
-#include <conio.h>
 #include <time.h>
 #include "interface.h"
 #include "../back/campominado.h"

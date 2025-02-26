@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
-#include <conio.h>
 #include "campominado.h"
 
 void limpar_buffer() {

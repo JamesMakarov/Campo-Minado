@@ -14,7 +14,8 @@
     "**/requirements{/**,*}.{txt,in}": "pip-requirements",
     "campominado.h": "c",
     "stdbool.h": "c",
-    "interface.h": "c"
+    "interface.h": "c",
+    "stdlib.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
