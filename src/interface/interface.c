@@ -7,6 +7,11 @@
 #include <time.h>
 #include "interface.h"
 #include "../back/campominado.h"
+#ifdef _WIN32
+    #define CLEAR_SCREEN "cls"
+#else
+    #define CLEAR_SCREEN "clear"
+#endif
 
 void limpar_buffer_interface() {
     // Limpa o buffer do stdin
@@ -15,8 +20,7 @@ void limpar_buffer_interface() {
 
 void MenuPrincipal(Tabuleiro *tabuleiro) {
     short int opcao = 0;
-    system("clear"); /*Limpa a tela no Linux(para quando o Miguel GOAT for corrigir )*/
-    system("cls");  /*Limpa a tela no Windows*/
+    system(CLEAR_SCREEN);
     printf("\033[0;33m"); // cor amarela no terminal
     printf("\n\n");
     printf("   +================================+\n");
@@ -207,8 +211,7 @@ void Exibir_Tabuleiro(Tabuleiro *tabuleiro, int altura, int largura) {
 
 bool Regras() {
     char pronto;
-    system("clear"); 
-    system("cls");  
+    system(CLEAR_SCREEN); 
     printf("\033[0;33m"); /*Aqui é pra cor continuar igual ao do menu.*/
     printf("\n\n");
     printf("   +================================+\n");
@@ -297,21 +300,21 @@ void MenuPosJogo(Tabuleiro *tabuleiro, int *altura, int *largura, int *num_bomba
 
     printf("\033[0;33m"); // cor amarela no terminal
     printf("\n\n");
-    printf("   ==================================\n");
+    printf("   ==================================    \n");
     printf("            DESEJA CONTINUAR?            \n");
-    printf("   ==================================\n");
+    printf("   ==================================    \n");
     printf("\n");
     
-    printf("           1 - Jogar novamente         \n");
+    printf("           1 - Jogar novamente           \n");
     
-    printf("           2 - Voltar ao menu principal               \n");
+    printf("           2 - Voltar ao menu principal  \n");
    
-    printf("           3 - Sair                 \n");
+    printf("           3 - Sair                      \n");
     printf("\n");
     printf("   Tempo decorrido: %.2f segundos\n", tempo_decorrido);
     printf("   Escolha uma opcao: ");
     printf("\033[0m"); // retorna para a cor original do terminal (branco)
-    scanf("%d", &opcao);
+    scanf("%hd", &opcao);
 
     switch (opcao) {
         case 1:

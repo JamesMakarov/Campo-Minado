@@ -1,6 +1,10 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
-#include "..\back\campominado.h"
+#ifdef _WIN32
+    #include "..\back\campominado.h"
+#else
+    #include "../back/campominado.h"
+#endif
 #include <time.h>
 
 void MenuPrincipal();
